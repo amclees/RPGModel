@@ -1,4 +1,4 @@
-package character;
+package inventory;
 
 public class Inventory {
 	//List of entities

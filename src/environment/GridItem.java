@@ -1,9 +1,10 @@
 package environment;
 
+import inventory.IItem;
 import core.Entity;
 import core.Material;
 
-public interface GridItem extends Entity {
+public interface GridItem extends IItem {
 	public double getWeight();
 	public int getHP();
 	public int getMaxHP();

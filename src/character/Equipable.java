@@ -1,15 +1,15 @@
 package character;
 
+import inventory.Item;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import core.Entity;
-
-public class Equipable implements Entity {
+public class Equipable extends Item {
 	
 	public Equipable(String name, EquipmentSlot slot, Size size, double weight, int aCBonus, int dexPenalty, int attackDice, int diceSides, int range,
 			String description) {
-		this.name = name;
+		super(name, weight); //Add super params
 		this.slot = slot;
 		this.size = size;
 		ACBonus = aCBonus;
@@ -18,11 +18,10 @@ public class Equipable implements Entity {
 		this.diceSides = diceSides;
 		this.range = range;
 		this.description = description;
-		this.properties = new HashMap<String, Object>();
-		properties.put("weight", weight); //Replace later
+		this.weight = weight;
 	}
 
-	private String name;
+	private double weight;
 	private EquipmentSlot slot;
 	private Size size;
 	private int ACBonus;
@@ -31,7 +30,7 @@ public class Equipable implements Entity {
 	private int diceSides;
 	private String description;
 	private int range;
-	private Map<String, Object> properties;
+	
 	
 	public EquipmentSlot getEquipmentSlot() {
 		return this.slot;
@@ -45,14 +44,7 @@ public class Equipable implements Entity {
 		return range;
 	}
 	
-	public void setProperty(String key, Object value) {
-		properties.remove(key);
-		properties.put(key, value);
-	}
 	
-	public Object getProperty(String key) {
-		return properties.get(key);
-	}
 	
 	public Size getSize() {
 		return size;
@@ -70,8 +62,8 @@ public class Equipable implements Entity {
 		return diceSides;
 	}
 
-	public String getName() {
-		return name;
+	public double getWeight() {
+		return weight;
 	}
 	
 	
