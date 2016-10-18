@@ -1,12 +1,13 @@
 package character;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import core.Entity;
 
 public class Equipable implements Entity {
 	
-	public Equipable(String name, EquipmentSlot slot, Size size, int aCBonus, int dexPenalty, int attackDice, int diceSides, int range,
+	public Equipable(String name, EquipmentSlot slot, Size size, double weight, int aCBonus, int dexPenalty, int attackDice, int diceSides, int range,
 			String description) {
 		this.name = name;
 		this.slot = slot;
@@ -17,6 +18,8 @@ public class Equipable implements Entity {
 		this.diceSides = diceSides;
 		this.range = range;
 		this.description = description;
+		this.properties = new HashMap<String, Object>();
+		properties.put("weight", weight); //Replace later
 	}
 
 	private String name;

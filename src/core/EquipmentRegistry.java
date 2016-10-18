@@ -12,7 +12,7 @@ public class EquipmentRegistry {
 	
 	public static void init() {
 		equipment = new HashMap<String, Equipable>();
-		equipment.put("fist", new Equipable("fist", EquipmentSlot.NONE, Size.ANY, 0, 0, 1, 4, 1, "A fist"));
+		equipment.put("fist", new Equipable("fist", EquipmentSlot.NONE, Size.ANY, 0.0d, 0, 0, 1, 4, 1, "A fist"));
 	}
 	
 	public static Equipable getEquipment(String name) {

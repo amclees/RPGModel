@@ -41,6 +41,8 @@ public class SimpleCombatTest {
 			}
 		}
 		
+		grid.setElement(14, 17, Layer.CHARACTER, new Human("Hiro", 45.0d, 70, 40, 30, 25, 25, 25, "Hiro"));
+		
 		CombatManager combat = new CombatManager(grid);
 		
 		charStatus(grid);
