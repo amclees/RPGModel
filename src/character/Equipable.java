@@ -9,35 +9,27 @@ public class Equipable extends Item {
 	
 	public Equipable(String name, EquipmentSlot slot, Size size, double weight, int aCBonus, int dexPenalty, int attackDice, int diceSides, int range,
 			String description) {
-		super(name, weight); //Add super params
+		super(name, weight, description); //Add super params
 		this.slot = slot;
 		this.size = size;
-		ACBonus = aCBonus;
+		this.ACBonus = aCBonus;
 		this.dexPenalty = dexPenalty;
 		this.attackDice = attackDice;
 		this.diceSides = diceSides;
 		this.range = range;
-		this.description = description;
-		this.weight = weight;
 	}
 
-	private double weight;
 	private EquipmentSlot slot;
 	private Size size;
 	private int ACBonus;
 	private int dexPenalty;
 	private int attackDice;
 	private int diceSides;
-	private String description;
 	private int range;
 	
 	
 	public EquipmentSlot getEquipmentSlot() {
 		return this.slot;
-	}
-	
-	public String getDescription() {
-		return description;
 	}
 	
 	public int getRange() {
@@ -60,10 +52,6 @@ public class Equipable extends Item {
 	}
 	public int getDiceSides() {
 		return diceSides;
-	}
-
-	public double getWeight() {
-		return weight;
 	}
 	
 	

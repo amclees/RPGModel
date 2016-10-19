@@ -6,15 +6,24 @@ import java.util.Map;
 public class Item implements IItem {
 	private Map<String, Object> properties;
 	private String name;
+	private String description;
+	private double weight;
 	
 	
-	public Item(String name) { //Add params from equipable  to remove errors
+	public Item(String name, Double weight, String description) { //Add params from equipable  to remove errors
 		this.properties = new HashMap<String, Object>();
 		this.name = name;
+		this.description = description;
+		this.weight = weight;
+		
 	}
 	
 	public String getName() {
 		return name;
+	}
+	
+	public double getWeight() {
+		return weight;
 	}
 	
 	public void setProperty(String key, Object value) {
@@ -24,6 +33,10 @@ public class Item implements IItem {
 	
 	public Object getProperty(String key) {
 		return properties.get(key);
+	}
+	
+	public String getDescription() {
+		return description;
 	}
 	
 	

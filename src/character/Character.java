@@ -14,7 +14,7 @@ import core.Material;
 import environment.Action;
 import environment.AttackAction;
 import environment.Grid;
-import environment.GridItem;
+import environment.IGridItem;
 import environment.Layer;
 import environment.MoveAction;
 
@@ -37,11 +37,21 @@ public abstract class Character implements ICharacter {
 	protected int wisdom;
 	protected int intelligence;
 	protected int charisma;
-	private Map<String, Object> properties;
+	private Map<String, Object> properties; //Note that properties DO NOT TRANSFER on copy
 	protected int x;
 	protected int y;
 	protected String name;
 	
+	
+	
+	
+	public int getXP() {
+		return this.xp;
+	}
+	
+	public int getXPToNextLevel() {
+		return this.xpToNextLevel;
+	}
 	
 	public Character() {
 		properties = new HashMap<String, Object>();
@@ -135,7 +145,7 @@ public abstract class Character implements ICharacter {
 	 * Store the previously found path until the destination changes, so that you don't recalculate every time
 	 * Use concurrent maps and such to multithread this (Will takes quite a while, wait until after other methods)
 	 */
-	private List<int[]> getSteps(GridItem destination, Grid grid, int range) {
+	private List<int[]> getSteps(IGridItem destination, Grid grid, int range) {
 		int destX = destination.getX();
 		int destY = destination.getY();
 		int[] dest = {destX, destY};
@@ -245,11 +255,16 @@ public abstract class Character implements ICharacter {
 		return this.weight;
 	}
 	
+	//How much XP to get from killing this
 	public int getChallengeRating() {
 		int rating = 0;
-		rating += speed * 5;
-		rating += level * 10;
-		rating += HP;
+		rating += speed;
+		rating += strength * 2;
+		rating += dexterity * 2;
+		rating += wisdom * 2;
+		rating += intelligence * 2;
+		rating += constitution * 2;
+		rating += charisma * 2;
 		return rating;
 	}
 	
@@ -264,14 +279,15 @@ public abstract class Character implements ICharacter {
 	
 	public int attackRoll() {
 		int roll = Dice.d20();
-		roll += strength / 2;
-		roll += dexterity / 6;
+		roll += strength / 3;
+		roll += dexterity / 9;
 		return roll;
 	}
 	
 	public int ACRoll() {
 		int roll = Dice.d20();
-		roll += dexterity / 2;
+		roll += dexterity / 6;
+		roll += strength / 9;
 		for(Equipable e : this.getEquipment()) {
 			roll -= e.getDexPenalty() / 2;
 		}
@@ -289,10 +305,10 @@ public abstract class Character implements ICharacter {
 		this.HP = HP;
 	}
 	public void addXP(int xp) {
-		xp += xp;
-		if(xp >= xpToNextLevel) {
-			xp -= xpToNextLevel;
-			xpToNextLevel = (int)(xpToNextLevel * 1.2d);
+		this.xp += xp;
+		if(this.xp >= xpToNextLevel) {
+			this.xp -= xpToNextLevel;
+			xpToNextLevel = (int)(xpToNextLevel * 1.35d);
 			level++;
 			strength = levelStat(strength);
 			dexterity = levelStat(dexterity);
@@ -307,7 +323,8 @@ public abstract class Character implements ICharacter {
 	}
 	
 	private int levelStat(int stat) {
-		return (int)Math.floor(Math.random() * 2);
+		return stat + (int)Math.round(stat * Math.random() / 12d);
+		//return stat + (int)Math.floor(Math.random() * 2);
 	}
 	
 	public Size getSize() {

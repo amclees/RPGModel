@@ -1,6 +1,6 @@
 package inventory;
 
 public class Inventory {
-	//List of entities
+	//List of iitems
 	//Operations on this list
 }

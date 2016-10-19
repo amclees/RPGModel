@@ -1,6 +1,5 @@
 /character/
-/core/
-/environment/
-/gui/
-/test/
 /inventory/
+/core/
+/test/
+/environment/

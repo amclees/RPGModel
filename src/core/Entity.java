@@ -8,7 +8,7 @@ public interface Entity extends Serializable {
 		return "";
 	}
 	public default long getGUID() {
-		return GUIDFactory.getGUID();
+		return GUIDFactory.getGUID(this);
 	}
 	public String getName();
 	public Object getProperty(String key);

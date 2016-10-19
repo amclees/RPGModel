@@ -22,10 +22,10 @@ public class Human extends Humanoid {
 		this.maxHP = HP;
 		
 		this.xpToNextLevel = 1000;
-		this.xp = 0;
 		
 		if(faction == null) this.faction = "human";
 		else this.faction = faction;
 	}
 
+	
 }

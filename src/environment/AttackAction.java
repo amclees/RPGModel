@@ -9,14 +9,14 @@ import core.EquipmentRegistry;
 public class AttackAction implements Action {
 
 	private ICharacter attacker;
-	private GridItem defender;
+	private IGridItem defender;
 	private Grid grid;
 	private Equipable weapon;
 	
 	/*
 	 * Grid is here for future sophisticated attacks (Ranged that might miss and hit something else)
 	 */
-	public AttackAction(ICharacter attacker, GridItem defender, Grid grid, EquipmentSlot weapon) {
+	public AttackAction(ICharacter attacker, IGridItem defender, Grid grid, EquipmentSlot weapon) {
 		this.attacker = attacker;
 		this.defender = defender;
 		this.grid = grid;
@@ -30,6 +30,9 @@ public class AttackAction implements Action {
 		if(attacker.attackRoll() > defender.ACRoll()) {
 			System.out.println(attacker.getName() + " hits " + defender.getName());
 			defender.loseHP(Dice.dx(weapon.getDiceSides(), weapon.getAttackDice()));
+			try {
+				if(defender.getHP() < 0) attacker.addXP(((ICharacter)defender).getChallengeRating());
+			} catch(ClassCastException e) {}
 		}
 		else System.out.println(attacker.getName() + " misses " + defender.getName());
 	}

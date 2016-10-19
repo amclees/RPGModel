@@ -4,9 +4,9 @@ import java.util.List;
 
 import environment.Action;
 import environment.Grid;
-import environment.GridItem;
+import environment.IGridItem;
 
-public interface ICharacter extends GridItem {
+public interface ICharacter extends IGridItem {
 	public List<Equipable> getEquipment();
 	public Equipable getEquipmentInSlot(EquipmentSlot slot);
 	public Size getSize();
@@ -20,6 +20,8 @@ public interface ICharacter extends GridItem {
 	public int getConstitution();
 	
 	public void addXP(int xp);
+	public int getXP();
+	public int getXPToNextLevel();
 	public int getLevel();
 	public int getChallengeRating();
 	

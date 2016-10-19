@@ -8,12 +8,12 @@ import java.util.Map;
 import character.ICharacter;
 
 public class Grid {
-	private Map<Layer, GridItem[][]> grid;
+	private Map<Layer, IGridItem[][]> grid;
 	
 	public Grid(int width, int height) {
-		this.grid = new HashMap<Layer, GridItem[][]>();
+		this.grid = new HashMap<Layer, IGridItem[][]>();
 		for(Layer layer : Layer.values()) {
-			this.grid.put(layer, new GridItem[width][height]);
+			this.grid.put(layer, new IGridItem[width][height]); 
 		}
 	}
 	
@@ -25,12 +25,15 @@ public class Grid {
 		return grid.get(Layer.CHARACTER).length;
 	}
 	
-	public GridItem getElement(int x, int y, Layer layer) throws ArrayIndexOutOfBoundsException {
+	/*
+	 * Modifications to allow for different storage types go here, need inventory
+	 */
+	public IGridItem getElement(int x, int y, Layer layer) throws ArrayIndexOutOfBoundsException {
 		return grid.get(layer)[x][y];
 	}
 	
 	public void moveElement(int x, int y, int dX, int dY, Layer layer) {
-		GridItem[][] items = grid.get(layer);
+		IGridItem[][] items = grid.get(layer);
 		if(items[dX][dY] != null || items[x][y] == null) {
 			return;
 		}
@@ -44,7 +47,7 @@ public class Grid {
 	public void removeElement(int x, int y, Layer layer) {
 		grid.get(layer)[x][y] = null;
 	}
-	public void setElement(int x, int y, Layer layer, GridItem item) {
+	public void setElement(int x, int y, Layer layer, IGridItem item) {
 		item.setX(x);
 		item.setY(y);
 		grid.get(layer)[x][y] = item;
@@ -52,10 +55,10 @@ public class Grid {
 	}
 	
 	public List<ICharacter> getCharacters() {
-		GridItem[][] grid = this.grid.get(Layer.CHARACTER);
+		IGridItem[][] grid = this.grid.get(Layer.CHARACTER);
 		List<ICharacter> list = new LinkedList<ICharacter>();
-		for(GridItem[] row : grid) {
-			for(GridItem item : row) {
+		for(IGridItem[] row : grid) {
+			for(IGridItem item : row) {
 				try {
 					ICharacter c = (ICharacter) item;
 					if(c != null) list.add(c);

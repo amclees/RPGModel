@@ -2,7 +2,7 @@ package environment;
 
 import core.Material;
 
-public class Terrain implements GridItem {
+public class Terrain implements IGridItem {
 	//Apply modifiers and such here as well as determine passability
 	//This is not where code for islands goes;
 	

@@ -4,8 +4,7 @@ import inventory.IItem;
 import core.Entity;
 import core.Material;
 
-public interface GridItem extends IItem {
-	public double getWeight();
+public interface IGridItem extends IItem {
 	public int getHP();
 	public int getMaxHP();
 	public int ACRoll();
