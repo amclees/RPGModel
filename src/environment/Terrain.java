@@ -2,7 +2,7 @@ package environment;
 
 import core.Material;
 
-public class Terrain implements IGridItem {
+public class Terrain implements IGridObject {
 	//Apply modifiers and such here as well as determine passability
 	//This is not where code for islands goes;
 	
@@ -88,6 +88,12 @@ public class Terrain implements IGridItem {
 	public void loseHP(int hp) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void neighborChange(Grid grid) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

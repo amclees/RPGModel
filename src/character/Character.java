@@ -14,7 +14,7 @@ import core.Material;
 import environment.Action;
 import environment.AttackAction;
 import environment.Grid;
-import environment.IGridItem;
+import environment.IGridObject;
 import environment.Layer;
 import environment.MoveAction;
 
@@ -43,7 +43,9 @@ public abstract class Character implements ICharacter {
 	protected String name;
 	
 	
-	
+	public void neighborChange(Grid grid) {
+		//Code for attack of opportunity and such
+	}
 	
 	public int getXP() {
 		return this.xp;
@@ -145,7 +147,7 @@ public abstract class Character implements ICharacter {
 	 * Store the previously found path until the destination changes, so that you don't recalculate every time
 	 * Use concurrent maps and such to multithread this (Will takes quite a while, wait until after other methods)
 	 */
-	private List<int[]> getSteps(IGridItem destination, Grid grid, int range) {
+	private List<int[]> getSteps(IGridObject destination, Grid grid, int range) {
 		int destX = destination.getX();
 		int destY = destination.getY();
 		int[] dest = {destX, destY};
@@ -240,11 +242,6 @@ public abstract class Character implements ICharacter {
 	
 	public String getName() {
 		return this.name;
-	}
-	
-	public void move(int xChange, int yChange) {
-		x += xChange;
-		y += yChange;
 	}
 	
 	public Material getMaterial() {

@@ -4,9 +4,9 @@ import java.util.List;
 
 import environment.Action;
 import environment.Grid;
-import environment.IGridItem;
+import environment.IGridObject;
 
-public interface ICharacter extends IGridItem {
+public interface ICharacter extends IGridObject {
 	public List<Equipable> getEquipment();
 	public Equipable getEquipmentInSlot(EquipmentSlot slot);
 	public Size getSize();

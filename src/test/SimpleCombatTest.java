@@ -10,6 +10,7 @@ import core.NPCRegistry;
 import environment.CombatManager;
 import environment.Grid;
 import environment.IGridItem;
+import environment.IGridObject;
 import environment.Layer;
 
 public class SimpleCombatTest {

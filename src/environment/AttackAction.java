@@ -9,14 +9,14 @@ import core.EquipmentRegistry;
 public class AttackAction implements Action {
 
 	private ICharacter attacker;
-	private IGridItem defender;
+	private IGridObject defender;
 	private Grid grid;
 	private Equipable weapon;
 	
 	/*
 	 * Grid is here for future sophisticated attacks (Ranged that might miss and hit something else)
 	 */
-	public AttackAction(ICharacter attacker, IGridItem defender, Grid grid, EquipmentSlot weapon) {
+	public AttackAction(ICharacter attacker, IGridObject defender, Grid grid, EquipmentSlot weapon) {
 		this.attacker = attacker;
 		this.defender = defender;
 		this.grid = grid;
