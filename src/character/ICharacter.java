@@ -12,6 +12,10 @@ public interface ICharacter extends IGridObject {
 	public Size getSize();
 	public String getFaction();
 	
+	/*
+	 * Methods for character inventory go here
+	 */
+	
 	public int getStrength();
 	public int getDexterity();
 	public int getIntelligence();

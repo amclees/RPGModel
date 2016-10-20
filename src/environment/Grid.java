@@ -1,5 +1,6 @@
 package environment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,7 +52,25 @@ public class Grid {
 		item.setX(x);
 		item.setY(y);
 		grid.get(layer)[x][y] = item;
-		//Notify adjacent elements of the change
+		for(IGridItem c : this.getNeighbors(x, y, layer)) {
+			c.neighborChange(this);
+		}
+		
+	}
+	
+	public List<IGridItem> getNeighbors(int x, int y, Layer layer) {
+		List<IGridItem> neighbors = new ArrayList<IGridItem>(8);
+		for(int i = -1; i <= 1; i++) {
+			for(int j = -1; j <= 1; j++) {
+				if(!(i == 0 && j == 0)){
+					int[] neighbor = {i + x, j + y};
+					try {
+						if(this.getElement(neighbor[0], neighbor[1], layer) != null) neighbors.add(this.getElement(neighbor[0], neighbor[1], layer));
+					} catch(ArrayIndexOutOfBoundsException e) {}
+				}			
+			}
+		}
+		return neighbors;
 	}
 	
 	public List<ICharacter> getCharacters() {

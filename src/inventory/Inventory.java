@@ -1,12 +1,17 @@
 package inventory;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-public class Inventory {
+import environment.IGridItem;
+
+public class Inventory extends Item {
 	private List<IItem> inventory;
 	
-	public Inventory() {
+	public Inventory(String name) {
+		super(name, 0.0d, "");
 		inventory = new LinkedList<IItem>();
 	}
 	
