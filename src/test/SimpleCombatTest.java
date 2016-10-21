@@ -5,6 +5,7 @@ import java.util.Scanner;
 import character.Human;
 import character.ICharacter;
 import core.EquipmentRegistry;
+import core.ItemRegistry;
 import core.MaterialRegistry;
 import core.NPCRegistry;
 import environment.CombatManager;
@@ -16,6 +17,7 @@ import environment.Layer;
 public class SimpleCombatTest {
 	public static void main(String[] args) throws InterruptedException {
 		MaterialRegistry.init();
+		ItemRegistry.init();
 		EquipmentRegistry.init();
 		NPCRegistry.init();
 		
