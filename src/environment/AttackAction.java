@@ -28,8 +28,9 @@ public class AttackAction implements Action {
 	
 	public void applyAction() {
 		if(attacker.attackRoll() > defender.ACRoll()) {
-			System.out.println(attacker.getName() + " hits " + defender.getName());
-			defender.loseHP(Dice.dx(weapon.getDiceSides(), weapon.getAttackDice()));
+			int dmg = Dice.dx(weapon.getDiceSides(), weapon.getAttackDice());
+			System.out.println(attacker.getName() + " hits " + defender.getName() + " for " + dmg + " damage with a " + weapon.getAttackDice() + "d" + weapon.getDiceSides());
+			defender.loseHP(dmg);
 			try {
 				if(defender.getHP() < 0) attacker.addXP(((ICharacter)defender).getChallengeRating());
 			} catch(ClassCastException e) {}

@@ -3,6 +3,7 @@ package core;
 import java.util.HashMap;
 import java.util.Map;
 
+import character.Equipable;
 import inventory.IItem;
 import inventory.Item;
 
@@ -17,5 +18,9 @@ public class ItemRegistry {
 	
 	public static IItem getItem(String name) {
 		return items.get(name);
+	}
+	
+	protected static void putEquipment(Equipable e) {
+		items.put(e.getName(), e);
 	}
 }

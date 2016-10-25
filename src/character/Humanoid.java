@@ -22,23 +22,29 @@ public abstract class Humanoid extends Character {
 	}
 	
 	
-	public void equip(Equipable toEquip) {
-		switch(toEquip.getEquipmentSlot()) {
-			case LEGS: legs = toEquip; break;
-			case FEET: feet = toEquip; break;
-			case CHEST: chest = toEquip; break;
-			case HEAD: head = toEquip; break;
-			case NECK: neck = toEquip; break;
-			case LEFTHAND: leftHand = toEquip; break;
-			case RIGHTHAND: rightHand = toEquip; break;
-			case NONE: noneEquipable.add(toEquip); break;
+	public void equip(Equipable toEquip, EquipmentSlot slot) {
+		if(this.getEquipmentInSlot(slot) == null && toEquip.getEquipmentSlot() == slot) {
+			switch(slot) {
+				case LEGS: legs = toEquip; break;
+				case FEET: feet = toEquip; break;
+				case CHEST: chest = toEquip; break;
+				case HEAD: head = toEquip; break;
+				case NECK: neck = toEquip; break;
+				case LEFTHAND: leftHand = toEquip; break;
+				case RIGHTHAND: rightHand = toEquip; break;
+				case NONE: noneEquipable.add(toEquip); break;
+			}
 		}
+	}
 	
+	public void unequip(EquipmentSlot slot) {
+		Equipable e = this.getEquipmentInSlot(slot);
+		e = null;
 	}
 	
 	public Equipable getEquipmentInSlot(EquipmentSlot slot) {
 		switch(slot) {
-			case LEGS: return legs; 
+			case LEGS: return legs;
 			case FEET: return feet;
 			case CHEST: return chest;
 			case HEAD: return head;

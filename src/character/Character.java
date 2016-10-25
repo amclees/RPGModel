@@ -14,6 +14,7 @@ import core.Material;
 import environment.Action;
 import environment.AttackAction;
 import environment.Grid;
+import environment.IGridItem;
 import environment.IGridObject;
 import environment.Layer;
 import environment.MoveAction;
@@ -41,7 +42,8 @@ public abstract class Character implements ICharacter {
 	protected int x;
 	protected int y;
 	protected String name;
-	
+	private List<int[]> pathtoOldDest;
+	private IGridItem oldDest;
 	
 	public void neighborChange(Grid grid) {
 		//Code for attack of opportunity and such
@@ -96,8 +98,6 @@ public abstract class Character implements ICharacter {
 		}
 		if(charactersByDistance.size() == 0) return null;
 		
-		Equipable weapon = EquipmentRegistry.getEquipment("fist");
-		
 		ICharacter target = null;
 		
 		for(ICharacter c : charactersByDistance) {
@@ -120,10 +120,13 @@ public abstract class Character implements ICharacter {
 		}
 		if(target == null) return null;
 		
+		Equipable weapon = EquipmentRegistry.getEquipment("fist");
 		
 		for(Equipable e : this.getEquipment()) {
-			if(Math.abs(target.getX() - this.getX()) + Math.abs(target.getY() - this.getY()) <= weapon.getRange()) {
-				if(e.getAttackDice() * e.getDiceSides() > weapon.getAttackDice() * weapon.getDiceSides()) {
+			int[] hereRange = {this.x, this.y};
+			int[] targRange = {target.getX(), target.getY()};
+			if(dist(hereRange, targRange) <= e.getRange()) {
+				if(e.getAttackDice() * e.getDiceSides() >= weapon.getAttackDice() * weapon.getDiceSides()) {
 					weapon = e;
 				}
 			}
@@ -132,7 +135,7 @@ public abstract class Character implements ICharacter {
 		
 		if(Math.abs(target.getX() - this.getX()) + Math.abs(target.getY() - this.getY()) <= weapon.getRange()) {
 			System.out.println(this.getName() + " is targeting " + target.getName());
-			action = new AttackAction(this, target, grid, EquipmentSlot.NONE);
+			action = new AttackAction(this, target, grid, weapon.getEquipmentSlot());
 		} else {
 			System.out.println(this.getName() + " is moving towards " + target.getName());
 			List<int[]> steps = this.getSteps(target, grid, weapon.getRange());
@@ -147,80 +150,86 @@ public abstract class Character implements ICharacter {
 	 * Store the previously found path until the destination changes, so that you don't recalculate every time
 	 * Use concurrent maps and such to multithread this (Will takes quite a while, wait until after other methods)
 	 */
-	private List<int[]> getSteps(IGridObject destination, Grid grid, int range) {
-		int destX = destination.getX();
-		int destY = destination.getY();
-		int[] dest = {destX, destY};
-		int[] here = {this.getX(), this.getY()};
-		System.out.println("Pathing from here " + here[0] + ", " + here[1] + " to dest " + dest[0] + ", " + dest[1]);
-
-		
-		List<int[]> uncheckedCoords = new LinkedList<int[]>();
-		List<int[]> checkedCoords = new LinkedList<int[]>();
-		Map<int[], int[]> bestApproach = new HashMap<int[], int[]>();
-		Map<int[], Integer> costToCoord = new HashMap<int[], Integer>();
-		Map<int[], Integer> totalEstimatedPassingCost = new HashMap<int[], Integer>();
-		uncheckedCoords.add(here);
-		costToCoord.put(here, 0);
-		totalEstimatedPassingCost.put(here, dist(here, dest));
-		int[] current = null;
-		int maxNodes = grid.getHeight() * grid.getWidth();
-		while(uncheckedCoords.size() != 0) {
-			if(maxNodes < 0) break;
-			maxNodes--;
-			current = null;
-			int currentCost = Integer.MAX_VALUE;
-			for(int[] c : uncheckedCoords) {
-				if(totalEstimatedPassingCost.get(c) < currentCost) {
-					current = c;
-					currentCost = totalEstimatedPassingCost.get(c);
+	private List<int[]> getSteps(IGridItem destination, Grid grid, int range) {
+		List<int[]> path;
+		if(oldDest != destination) {
+			int destX = destination.getX();
+			int destY = destination.getY();
+			int[] dest = {destX, destY};
+			int[] here = {this.getX(), this.getY()};
+			System.out.println("Pathing from here " + here[0] + ", " + here[1] + " to dest " + dest[0] + ", " + dest[1]);
+	
+			
+			List<int[]> uncheckedCoords = new LinkedList<int[]>();
+			List<int[]> checkedCoords = new LinkedList<int[]>();
+			Map<int[], int[]> bestApproach = new HashMap<int[], int[]>();
+			Map<int[], Integer> costToCoord = new HashMap<int[], Integer>();
+			Map<int[], Integer> totalEstimatedPassingCost = new HashMap<int[], Integer>();
+			uncheckedCoords.add(here);
+			costToCoord.put(here, 0);
+			totalEstimatedPassingCost.put(here, dist(here, dest));
+			int[] current = null;
+			int maxNodes = dist(dest, here) * 3;
+			while(uncheckedCoords.size() != 0) {
+				if(maxNodes < 0) break;
+				maxNodes--;
+				current = null;
+				int currentCost = Integer.MAX_VALUE;
+				for(int[] c : uncheckedCoords) {
+					if(totalEstimatedPassingCost.get(c) < currentCost) {
+						current = c;
+						currentCost = totalEstimatedPassingCost.get(c);
+					}
 				}
-			}
-			//System.out.println("Current is " + current[0] + ", " + current[1] + " with est. total cost of " + currentCost);
-			if(dist(dest, current) == 1) {
-				break;
-			}
-			
-			uncheckedCoords.remove(current);
-			checkedCoords.add(current);
-			
-			List<int[]> neighbors = new ArrayList<int[]>(8);
-			for(int i = -1; i <= 1; i++) {
-				for(int j = -1; j <= 1; j++) {
-					if(!(i == 0 && j == 0)){
-						int[] neighbor = {i + current[0], j + current[1]};
-						try {
-							if(grid.getElement(neighbor[0], neighbor[1], Layer.CHARACTER) == null) neighbors.add(neighbor);
-						} catch(ArrayIndexOutOfBoundsException e) {}
-					}			
+				//System.out.println("Current is " + current[0] + ", " + current[1] + " with est. total cost of " + currentCost);
+				if(dist(dest, current) == 1) {
+					break;
 				}
-			}
-			
-			
-			for(int[] neighbor : neighbors) {
-				//System.out.println(neighbor[0] + ", " + neighbor[1]);
-				if(checkedCoords.contains(neighbor)) continue;
-				int costToNeighbor = dist(current, neighbor) + costToCoord.get(current);
-				int oldCostToNeighbor = costToCoord.containsKey(neighbor) ? costToCoord.get(neighbor) : Integer.MAX_VALUE;
-				//System.out.println("For neighbor at " + neighbor[0] + ", " + neighbor[1] + ": " + costToNeighbor + " is cost to neighbor. " + oldCostToNeighbor + " is previous cost.");
-				if(!uncheckedCoords.contains(neighbor)) uncheckedCoords.add(neighbor);
-				else if(costToNeighbor >= oldCostToNeighbor) continue;
 				
-				bestApproach.put(neighbor, current);
-				costToCoord.put(neighbor, costToNeighbor);
-				totalEstimatedPassingCost.put(neighbor, costToCoord.get(neighbor) + estimateCost(neighbor, dest));
+				uncheckedCoords.remove(current);
+				checkedCoords.add(current);
 				
-			}
+				List<int[]> neighbors = new ArrayList<int[]>(8);
+				for(int i = -1; i <= 1; i++) {
+					for(int j = -1; j <= 1; j++) {
+						if(!(i == 0 && j == 0)){
+							int[] neighbor = {i + current[0], j + current[1]};
+							try {
+								if(grid.getElement(neighbor[0], neighbor[1], Layer.CHARACTER) == null) neighbors.add(neighbor);
+							} catch(ArrayIndexOutOfBoundsException e) {}
+						}			
+					}
+				}
+				
+				
+				for(int[] neighbor : neighbors) {
+					//System.out.println(neighbor[0] + ", " + neighbor[1]);
+					if(checkedCoords.contains(neighbor)) continue;
+					int costToNeighbor = dist(current, neighbor) + costToCoord.get(current);
+					int oldCostToNeighbor = costToCoord.containsKey(neighbor) ? costToCoord.get(neighbor) : Integer.MAX_VALUE;
+					//System.out.println("For neighbor at " + neighbor[0] + ", " + neighbor[1] + ": " + costToNeighbor + " is cost to neighbor. " + oldCostToNeighbor + " is previous cost.");
+					if(!uncheckedCoords.contains(neighbor)) uncheckedCoords.add(neighbor);
+					else if(costToNeighbor >= oldCostToNeighbor) continue;
+					
+					bestApproach.put(neighbor, current);
+					costToCoord.put(neighbor, costToNeighbor);
+					totalEstimatedPassingCost.put(neighbor, costToCoord.get(neighbor) + estimateCost(neighbor, dest));
+					
+				}
+				
+	 		} 
 			
- 		}
-		
-		List<int[]> path = new LinkedList<int[]>();
-		path.add(current);
-		while(bestApproach.containsKey(current)) {
-			current = bestApproach.get(current);
-			path.add(0, current);
+			path = new LinkedList<int[]>();
+			path.add(current);
+			while(bestApproach.containsKey(current)) {
+				current = bestApproach.get(current);
+				path.add(0, current);
+			}
+			this.oldDest = destination;
+			this.pathtoOldDest = path;
+		} else {
+			path = this.pathtoOldDest;
 		}
-		
 		
 		List<int[]> steps = new ArrayList<int[]>(this.getSpeed());
 		

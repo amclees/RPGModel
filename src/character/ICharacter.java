@@ -9,6 +9,8 @@ import environment.IGridObject;
 public interface ICharacter extends IGridObject {
 	public List<Equipable> getEquipment();
 	public Equipable getEquipmentInSlot(EquipmentSlot slot);
+	public void equip(Equipable equipment, EquipmentSlot slot);
+	public void unequip(EquipmentSlot slot);
 	public Size getSize();
 	public String getFaction();
 	

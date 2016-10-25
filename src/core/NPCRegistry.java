@@ -19,7 +19,7 @@ public class NPCRegistry {
 		npcs.put("Guts", new Human("Guts", 60.0d, 90, 45, 30, 25, 21, 65, "Bank of the Hawk"));
 		npcs.put("Griffith", new Human("Griffith", 55.0d, 45, 80, 40, 40, 45, 30, "Bank of the Hawk"));
 		npcs.put("Killua", new Human("Killua", 40.0d, 55, 75, 60, 28, 23, 35, "Hunter Association"));
-		npcs.put("Gon", new Human("Gon", 40.0d, 90, 80, 100, 15, 32, 80, "Hunter Association"));
+		npcs.put("Gon", new Human("Gon", 40.0d, 50, 80, 70, 15, 32, 80, "Hunter Association"));
 		
 		//Should add to templates later
 		//npcs.put("Bandit", new Human("Bandit", 50.0d, 25, 25, 25, 25, 25, 25, "Bandits"));
