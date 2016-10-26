@@ -149,6 +149,8 @@ public abstract class Character implements ICharacter {
 	 * Limits the maxNodes to a number below number of nodes in the grid
 	 * Store the previously found path until the destination changes, so that you don't recalculate every time
 	 * Use concurrent maps and such to multithread this (Will takes quite a while, wait until after other methods)
+	 * 
+	 * There is an issue with pathing. Sometimes NPCs with same target and faction next to each other don't move
 	 */
 	private List<int[]> getSteps(IGridItem destination, Grid grid, int range) {
 		List<int[]> path;
