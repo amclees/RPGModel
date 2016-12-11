@@ -1,7 +1,8 @@
 package environment;
 
 import character.ICharacter;
+import gui.TextDisplay;
 
 public interface Action {
-	public void applyAction();
+	public void applyAction(TextDisplay out);
 }

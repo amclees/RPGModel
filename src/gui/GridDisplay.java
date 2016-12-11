@@ -6,19 +6,23 @@ import environment.Layer;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 
 public class GridDisplay {
 	private Grid grid;
+	private Main main;
+	private GridPane gridPane;
 	
-	public GridDisplay(Grid grid) {
+	public GridDisplay(Grid grid, Main main) {
 		this.grid = grid;
-	}
-	
-	public GridPane getPane() {
+		this.main = main;
+		
 		GridPane gridPane = new GridPane();
 		gridPane.setAlignment(Pos.CENTER);
 		for(int i = 0; i < grid.getWidth(); i++) {
@@ -26,6 +30,19 @@ public class GridDisplay {
 				gridPane.add(getNode(i, j), i, j);
 			}
 		}
+		this.gridPane = gridPane;
+	}
+	
+	public void update() {
+		this.gridPane.getChildren().removeAll(this.gridPane.getChildren());
+		for(int i = 0; i < grid.getWidth(); i++) {
+			for(int j = 0; j < grid.getHeight(); j++) {
+				gridPane.add(getNode(i, j), i, j);
+			}
+		}
+	}
+	
+	public Node getPane() {
 		return gridPane;
 	}
 	
@@ -33,12 +50,17 @@ public class GridDisplay {
 		Label node = new Label("");
 		node.setPrefWidth(75);
 		node.setPrefHeight(75);
-		node.setStyle("-fx-border-color: #000000; -fx-border-width: 1px;");
+		node.setStyle("-fx-padding: 5px; -fx-font-size: 12px;");
 		node.setAlignment(Pos.CENTER);
+		node.setMinSize(node.getPrefWidth(), node.getPrefHeight());
 		ICharacter character = (ICharacter)grid.getElement(x, y, Layer.CHARACTER);
 		if(character != null) {
-			node.setText(character.getName().substring(0, 2));
-		} 
+			node.setText(character.getName());
+			node.setOnMouseClicked(e -> {
+				main.detailDisplay.display(x, y);
+				main.updateDetail();
+			});
+		}
 		return node;
 	}
 }

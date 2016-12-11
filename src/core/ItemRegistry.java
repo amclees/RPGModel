@@ -17,7 +17,7 @@ public class ItemRegistry {
 	}
 	
 	public static IItem getItem(String name) {
-		return items.get(name);
+		return new Item(items.get(name));
 	}
 	
 	protected static void putEquipment(Equipable e) {

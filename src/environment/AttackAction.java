@@ -5,6 +5,7 @@ import character.EquipmentSlot;
 import character.ICharacter;
 import core.Dice;
 import core.EquipmentRegistry;
+import gui.TextDisplay;
 
 public class AttackAction implements Action {
 
@@ -26,16 +27,16 @@ public class AttackAction implements Action {
 		}
 	}
 	
-	public void applyAction() {
+	public void applyAction(TextDisplay out) {
 		if(attacker.attackRoll() > defender.ACRoll()) {
 			int dmg = Dice.dx(weapon.getDiceSides(), weapon.getAttackDice());
-			System.out.println(attacker.getName() + " hits " + defender.getName() + " for " + dmg + " damage with a " + weapon.getAttackDice() + "d" + weapon.getDiceSides());
+			out.print(attacker.getName() + " hits " + defender.getName() + " for " + dmg + " damage with a " + weapon.getAttackDice() + "d" + weapon.getDiceSides());
 			defender.loseHP(dmg);
 			try {
 				if(defender.getHP() < 0) attacker.addXP(((ICharacter)defender).getChallengeRating());
 			} catch(ClassCastException e) {}
 		}
-		else System.out.println(attacker.getName() + " misses " + defender.getName());
+		else out.print(attacker.getName() + " misses " + defender.getName());
 	}
 	
 }

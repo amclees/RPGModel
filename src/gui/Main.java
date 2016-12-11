@@ -5,6 +5,7 @@ import character.EquipmentSlot;
 import character.Human;
 import character.ICharacter;
 import core.EquipmentRegistry;
+import core.GridGenerator;
 import core.MainRegistry;
 import core.NPCRegistry;
 import environment.CombatManager;
@@ -14,72 +15,64 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 /*
  * TODO Use a style sheet to format this
  */
 public class Main extends Application {
-
+	VBox main;
+	Grid grid;
+	DetailDisplay detailDisplay;
+	Text text;
+	TextDisplay textDisplay;
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		MainRegistry.init();
-		VBox main = new VBox();
+		main = new VBox();
+		main.getStyleClass().add("display");
 		main.setAlignment(Pos.CENTER);
 		
-		Grid grid = new Grid(100, 100);
-		CombatManager combat = new CombatManager(grid);
-		ICharacter h1 = NPCRegistry.getNPC("Guts");
-		h1.equip(EquipmentRegistry.getEquipment("Gut's Sword"), EquipmentSlot.RIGHTHAND);
-		ICharacter h2 = NPCRegistry.getNPC("Griffith");
-		ICharacter h3 = NPCRegistry.getNPC("Killua");
-		ICharacter h4 = NPCRegistry.getNPC("Gon");
-		h1.addXP(5000);
-		h3.addXP(5000);
-		h4.addXP(200);
-		grid.setElement(0, 0, Layer.CHARACTER, h1);
-		grid.setElement(1, 0, Layer.CHARACTER, h2);
-		grid.setElement(3, 4, Layer.CHARACTER, h3);
-		grid.setElement(3, 7, Layer.CHARACTER, h4);
-		grid.setElement(7, 6, Layer.CHARACTER, new Human("Bandit", 50.0d, 25, 25, 25, 25, 25, 25, "Bandits"));
-		int bandits = 20;
-		int pirates = 12;
-		while(bandits > 0) {
-			bandits--;
-			boolean empty = false;
-			int i, j;
-			i = j = 0;
-			while(!empty) {
-				i = (int)(Math.random() * grid.getWidth());
-				j = (int)(Math.random() * grid.getWidth());
-				if(grid.getElement(i, j, Layer.CHARACTER) == null) empty = true;
-			}
-			grid.setElement(i, j, Layer.CHARACTER, new Human("Bandit", 50.0d, 25, 25, 25, 25, 25, 25, "Bandits"));
-		}
-		while(pirates > 0) {
-			pirates--;
-			boolean empty = false;
-			int i, j;
-			i = j = 0;
-			while(!empty) {
-				i = (int)(Math.random() * grid.getWidth());
-				j = (int)(Math.random() * grid.getWidth());
-				if(grid.getElement(i, j, Layer.CHARACTER) == null) empty = true;
-			}
-			grid.setElement(i, j, Layer.CHARACTER, new Human("Pirate", 50.0d, 25, 25, 25, 25, 25, 25, "Pirates"));
-			((ICharacter)grid.getElement(i, j, Layer.CHARACTER)).equip(EquipmentRegistry.getEquipment("Cutlass"), EquipmentSlot.RIGHTHAND);;
-		}
 		
-		GridDisplay gridDisplay = new GridDisplay(grid);
+		grid = GridGenerator.makeGrid();
+		
+		
+		text = new Text("Welcome!");
+		text.setFont(new Font(14));
+		text.setWrappingWidth(350);
+		text.setTextAlignment(TextAlignment.LEFT);
+		this.textDisplay = new TextDisplay(text);
+		ScrollPane textScroll = new ScrollPane(text);
+		textScroll.setStyle("-fx-padding: 12px;");
+		textScroll.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		textScroll.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		textScroll.setFitToHeight(true);
+		//textScroll.setFitToWidth(true);
+		textScroll.setPrefWidth(400);
+		textScroll.setMinWidth(textScroll.getPrefWidth() / 2);
+		
+		CombatManager combat = new CombatManager(grid, this.textDisplay);
+		
+		detailDisplay = new DetailDisplay(grid);
+		detailDisplay.display(0, 0);
+		main.getChildren().add(detailDisplay.getNode());
+		
+		GridDisplay gridDisplay = new GridDisplay(grid, this);
+		
 		
 		Button nextRound = new Button("Next Round");
 		nextRound.setAlignment(Pos.TOP_CENTER);
@@ -87,25 +80,52 @@ public class Main extends Application {
         nextRound.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
             	 combat.round();
-                 main.getChildren().set(1, gridDisplay.getPane());
+            	 textScroll.setVvalue(1);
+                 gridDisplay.update();
+                 updateDetail();
             }
         });
+        
         main.getChildren().add(nextRound);
-		main.getChildren().add(gridDisplay.getPane());
+    
+        Node gridPane = gridDisplay.getPane();
+        gridPane.getStyleClass().add("grid");
 		
 		
-		ScrollPane scroll = new ScrollPane(main);
+		
+		
+		ScrollPane scroll = new ScrollPane(gridPane);
 		scroll.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		scroll.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		scroll.setFitToHeight(true);
 		scroll.setFitToWidth(true);
 		
+		main.getChildren().add(scroll);
+		
+		HBox split = new HBox();
+		split.setAlignment(Pos.CENTER);
+		
+		
+		
+		split.getChildren().add(textScroll);
+		split.getChildren().add(main);
+		
+		Scene scene = new Scene(split, 1920, 1080);
+		scene.getStylesheets().add("/gui/main.css");
 		stage.setTitle("RPG Model");
-        stage.setScene(new Scene(scroll, 1920, 1080));
+        stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();
-        
-        
+	}
+
+	public void updateDetail() {
+		try {
+			this.detailDisplay.display(this.detailDisplay.getCharacter());
+		} catch(NullPointerException e) {
+			this.detailDisplay.display(this.detailDisplay.getX(), this.detailDisplay.getY());
+		}
+		
+		this.main.getChildren().set(0, detailDisplay.getNode());
 	}
 
 }

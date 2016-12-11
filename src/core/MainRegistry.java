@@ -6,5 +6,6 @@ public class MainRegistry {
 		ItemRegistry.init();
 		EquipmentRegistry.init();
 		NPCRegistry.init();
+		TerrainRegistry.init();
 	}
 }

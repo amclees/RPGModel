@@ -1,99 +1,111 @@
 package environment;
 
+import java.util.Map;
+
 import core.Material;
 
-public class Terrain implements IGridObject {
-	//Apply modifiers and such here as well as determine passability
-	//This is not where code for islands goes;
+public class Terrain implements IGridItem {
+	private static final long serialVersionUID = -5900761463881733825L;
+	private int x;
+	private int y;
+	private Map<String, Object> properties;
+	private String name;
+	private double movementModifier;
+	private boolean passable;
+	private String description;
+	private String imagePath;
 	
+	public Terrain(int x, int y, String name, String description, boolean passable, double movementModifier,
+			String imagePath) {
+		super();
+		this.x = x;
+		this.y = y;
+		this.name = name;
+		this.description = description;
+		this.passable = passable;
+		this.movementModifier = movementModifier;
+		this.imagePath = imagePath;
+	}
+
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return name;
 	}
-
-	@Override
-	public Object getProperty(String key) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
+	
 	public void setProperty(String key, Object value) {
-		// TODO Auto-generated method stub
-
+		properties.remove(key);
+		properties.put(key, value);
 	}
-
-	@Override
-	public double getWeight() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getHP() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getMaxHP() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int ACRoll() {
-		// TODO Auto-generated method stub
-		return 0;
+	
+	public Object getProperty(String key) {
+		return properties.get(key);
 	}
 
 	@Override
 	public int getX() {
-		// TODO Auto-generated method stub
-		return 0;
+		return x;
 	}
 
 	@Override
 	public int getY() {
-		// TODO Auto-generated method stub
-		return 0;
+		return y;
 	}
 
 	@Override
 	public void setX(int x) {
-		// TODO Auto-generated method stub
-
+		this.x = x;
 	}
 
 	@Override
 	public void setY(int y) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Material getMaterial() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setHP(int hp) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void loseHP(int hp) {
-		// TODO Auto-generated method stub
-
+		this.y = y;
 	}
 
 	@Override
 	public void neighborChange(Grid grid) {
-		// TODO Auto-generated method stub
-		
+		//Custom reaction
 	}
+
+	//Never call this
+	public double getWeight() {
+		return Double.MAX_VALUE * -1;
+	}
+
+	public double getMovementModifier() {
+		return movementModifier;
+	}
+
+	public void setMovementModifier(double movementModifier) {
+		this.movementModifier = movementModifier;
+	}
+
+	public boolean isPassable() {
+		return passable;
+	}
+
+	public void setPassable(boolean passable) {
+		this.passable = passable;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 
 }

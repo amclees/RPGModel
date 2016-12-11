@@ -2,11 +2,9 @@ package character;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import core.Dice;
 import core.EquipmentRegistry;
@@ -15,9 +13,9 @@ import environment.Action;
 import environment.AttackAction;
 import environment.Grid;
 import environment.IGridItem;
-import environment.IGridObject;
 import environment.Layer;
 import environment.MoveAction;
+import inventory.Inventory;
 
 public abstract class Character implements ICharacter {
 	protected static final long serialVersionUID = -32193334475144657L;
@@ -32,6 +30,7 @@ public abstract class Character implements ICharacter {
 	protected int HP;
 	protected String faction;
 	
+	protected String imagePath;
 	protected int strength;
 	protected int dexterity;
 	protected int constitution;
@@ -44,6 +43,12 @@ public abstract class Character implements ICharacter {
 	protected String name;
 	private List<int[]> pathtoOldDest;
 	private IGridItem oldDest;
+	private Inventory inventory;
+	
+	
+	public Inventory getInventory() {
+		return this.inventory;
+	}
 	
 	public void neighborChange(Grid grid) {
 		//Code for attack of opportunity and such
@@ -61,6 +66,8 @@ public abstract class Character implements ICharacter {
 		properties = new HashMap<String, Object>();
 		this.xp = 0;
 		this.level = 1;
+		this.inventory = new Inventory(this.getName());
+		this.getGUID();
 	}
 	
 	public void loseHP(int HP) {
@@ -134,10 +141,10 @@ public abstract class Character implements ICharacter {
 		
 		
 		if(Math.abs(target.getX() - this.getX()) + Math.abs(target.getY() - this.getY()) <= weapon.getRange()) {
-			System.out.println(this.getName() + " is targeting " + target.getName());
+			//System.out.println(this.getName() + " is targeting " + target.getName());
 			action = new AttackAction(this, target, grid, weapon.getEquipmentSlot());
 		} else {
-			System.out.println(this.getName() + " is moving towards " + target.getName());
+			//System.out.println(this.getName() + " is moving towards " + target.getName());
 			List<int[]> steps = this.getSteps(target, grid, weapon.getRange());
 			action = new MoveAction(this, grid, steps);
 		}
@@ -146,7 +153,7 @@ public abstract class Character implements ICharacter {
 	}
 	
 	/* Ideas to improve this:
-	 * Limits the maxNodes to a number below number of nodes in the grid
+	 * Limits the maxNodes to a better number
 	 * Store the previously found path until the destination changes, so that you don't recalculate every time
 	 * Use concurrent maps and such to multithread this (Will takes quite a while, wait until after other methods)
 	 * 
@@ -159,7 +166,7 @@ public abstract class Character implements ICharacter {
 			int destY = destination.getY();
 			int[] dest = {destX, destY};
 			int[] here = {this.getX(), this.getY()};
-			System.out.println("Pathing from here " + here[0] + ", " + here[1] + " to dest " + dest[0] + ", " + dest[1]);
+			//System.out.println("Pathing from here " + here[0] + ", " + here[1] + " to dest " + dest[0] + ", " + dest[1]);
 	
 			
 			List<int[]> uncheckedCoords = new LinkedList<int[]>();
@@ -389,6 +396,14 @@ public abstract class Character implements ICharacter {
 
 	public void setY(int y) {
 		this.y = y;
+	}
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
 	}
 	
 	

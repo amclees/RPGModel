@@ -6,13 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import character.ICharacter;
-import test.SimpleCombatTest;
+import gui.TextDisplay;
 
 public class CombatManager {
 	private Grid grid;
+	private TextDisplay display;
 	
-	public CombatManager(Grid grid) {
+	public CombatManager(Grid grid, TextDisplay display) {
 		this.grid = grid;
+		this.display = display;
 	}
 	
 	public void round() {
@@ -20,7 +22,7 @@ public class CombatManager {
 		for(ICharacter actor : characters) {
 			Action action = actor.getCombatAction(grid);
 			if(action != null) {
-				action.applyAction();
+				action.applyAction(this.display);
 				//SimpleCombatTest.gridStatus(grid);
 			}
 		}

@@ -5,6 +5,7 @@ import java.util.List;
 import environment.Action;
 import environment.Grid;
 import environment.IGridObject;
+import inventory.Inventory;
 
 public interface ICharacter extends IGridObject {
 	public List<Equipable> getEquipment();
@@ -13,10 +14,8 @@ public interface ICharacter extends IGridObject {
 	public void unequip(EquipmentSlot slot);
 	public Size getSize();
 	public String getFaction();
-	
-	/*
-	 * Methods for character inventory go here
-	 */
+
+	public Inventory getInventory();
 	
 	public int getStrength();
 	public int getDexterity();

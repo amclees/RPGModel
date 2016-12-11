@@ -18,6 +18,12 @@ public class Item implements IItem {
 		
 	}
 	
+	public Item(IItem toCopy) {
+		this.name = toCopy.getName();
+		this.description = toCopy.getDescription();
+		this.weight = toCopy.getWeight();
+	}
+	
 	public String getName() {
 		return name;
 	}
