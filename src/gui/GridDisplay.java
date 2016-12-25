@@ -6,20 +6,23 @@ import environment.Layer;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 public class GridDisplay {
 	private Grid grid;
 	private Main main;
 	private GridPane gridPane;
+	private int selectedX;
+	private int selectedY;
 	
 	public GridDisplay(Grid grid, Main main) {
+		selectedX = 0;
+		selectedY = 0;
 		this.grid = grid;
 		this.main = main;
 		
@@ -46,6 +49,12 @@ public class GridDisplay {
 		return gridPane;
 	}
 	
+	public void setSelected(int x, int y) {
+		this.selectedX = x;
+		this.selectedY = y;
+		this.update();
+	}
+	
 	private Node getNode(int x, int y) {
 		Label node = new Label("");
 		node.setPrefWidth(75);
@@ -55,8 +64,12 @@ public class GridDisplay {
 		node.setMinSize(node.getPrefWidth(), node.getPrefHeight());
 		ICharacter character = (ICharacter)grid.getElement(x, y, Layer.CHARACTER);
 		if(character != null) {
+			if(this.selectedX == x && this.selectedY == y) {
+				node.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, null, null)));
+			}
 			node.setText(character.getName());
 			node.setOnMouseClicked(e -> {
+				this.setSelected(x, y);
 				main.detailDisplay.display(x, y);
 				main.updateDetail();
 			});

@@ -6,19 +6,17 @@ import character.EquipmentSlot;
 import character.Human;
 import character.ICharacter;
 import core.EquipmentRegistry;
-import core.ItemRegistry;
-import core.MaterialRegistry;
+import core.MainRegistry;
 import core.NPCRegistry;
 import environment.CombatManager;
 import environment.Grid;
 import environment.Layer;
+import gui.TextDisplay;
+import javafx.scene.text.Text;
 
 public class SimpleCombatTest {
 	public static void main(String[] args) throws InterruptedException {
-		MaterialRegistry.init();
-		ItemRegistry.init();
-		EquipmentRegistry.init();
-		NPCRegistry.init();
+		MainRegistry.init();
 		
 		Grid grid = new Grid(50, 50);
 		ICharacter h1 = NPCRegistry.getNPC("Guts");
@@ -72,7 +70,7 @@ public class SimpleCombatTest {
 		grid.setElement(14, 17, Layer.CHARACTER, hiro);
 		
 		
-		CombatManager combat = new CombatManager(grid);
+		CombatManager combat = new CombatManager(grid, new TextDisplay(new Text()));
 		
 		Utils.charStatus(grid);
 		Utils.gridStatus(grid, Layer.CHARACTER);

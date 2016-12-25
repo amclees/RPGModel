@@ -1,15 +1,18 @@
 package test;
 
 import character.Human;
+import core.MainRegistry;
 import core.MaterialRegistry;
 import environment.CombatManager;
 import environment.Grid;
 import environment.Layer;
+import gui.TextDisplay;
+import javafx.scene.text.Text;
 
 public class TurnOrderTest {
 
 	public static void main(String[] args) {
-		MaterialRegistry.init();
+		MainRegistry.init();
 		Grid grid = new Grid(100, 100);
 		Human h1 = new Human("Guts", 60.0d, 90, 40, 30, 25, 21, 65, "Bank of the Hawk");
 		Human h2 = new Human("Griffith", 55.0d, 45, 80, 40, 40, 45, 30, "Band of the Hawk");
@@ -23,7 +26,7 @@ public class TurnOrderTest {
 			}
 		}
 		
-		CombatManager combat = new CombatManager(grid);
+		CombatManager combat = new CombatManager(grid, new TextDisplay(new Text()));
 		combat.round();
 		
 	}

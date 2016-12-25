@@ -74,10 +74,9 @@ public class DetailDisplay {
 		} catch(Exception e) {}	
 		display.getChildren().add(text);
 		
-		Text inventory = new Text("Inventory\nGoes\nHere");
-		inventory.setFont(new Font(18));
-		inventory.setWrappingWidth(400);
-		inventory.setTextAlignment(TextAlignment.LEFT);
+		
+		Node inventory = new InventoryDisplay(character.getInventory()).getNode();
+		
 		display.getChildren().add(inventory);
 		
 		this.node = display;

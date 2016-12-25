@@ -3,16 +3,18 @@ package test;
 import character.Human;
 import character.ICharacter;
 import core.EquipmentRegistry;
+import core.MainRegistry;
 import core.MaterialRegistry;
 import environment.CombatManager;
 import environment.Grid;
 import environment.Layer;
+import gui.TextDisplay;
+import javafx.scene.text.Text;
 
 public class MovementTest {
 
 	public static void main(String[] args) {
-		MaterialRegistry.init();
-		EquipmentRegistry.init();
+		MainRegistry.init();
 		Grid grid = new Grid(10, 10);
 		Human h1 = new Human("Guts", 60.0d, 90, 40, 30, 25, 21, 65, "Bank of the Hawk");
 		Human h2 = new Human("Griffith", 55.0d, 45, 80, 40, 40, 45, 30, "Band of the Hawk");
@@ -21,7 +23,7 @@ public class MovementTest {
 		grid.setElement(1, 0, Layer.CHARACTER, h2);
 		grid.setElement(3, 4, Layer.CHARACTER, h3);
 		
-		CombatManager combat = new CombatManager(grid);
+		CombatManager combat = new CombatManager(grid, new TextDisplay(new Text()));
 		
 		//combat.round();
 		

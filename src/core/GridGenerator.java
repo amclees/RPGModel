@@ -16,6 +16,7 @@ public class GridGenerator {
 		ICharacter h2 = NPCRegistry.getNPC("Griffith");
 		ICharacter h3 = NPCRegistry.getNPC("Killua");
 		ICharacter h4 = NPCRegistry.getNPC("Gon");
+		h4.getInventory().addItem(ItemRegistry.getItem("Nickel"), 7);
 		h1.addXP(5000);
 		h3.addXP(50000);
 		h4.addXP(200);

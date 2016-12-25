@@ -36,6 +36,7 @@ public class Main extends Application {
 	DetailDisplay detailDisplay;
 	Text text;
 	TextDisplay textDisplay;
+	GridDisplay gridDisplay;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -71,7 +72,7 @@ public class Main extends Application {
 		detailDisplay.display(0, 0);
 		main.getChildren().add(detailDisplay.getNode());
 		
-		GridDisplay gridDisplay = new GridDisplay(grid, this);
+		gridDisplay = new GridDisplay(grid, this);
 		
 		
 		Button nextRound = new Button("Next Round");
@@ -81,8 +82,9 @@ public class Main extends Application {
             @Override public void handle(ActionEvent e) {
             	 combat.round();
             	 textScroll.setVvalue(1);
-                 gridDisplay.update();
                  updateDetail();
+                 gridDisplay.setSelected(detailDisplay.getX(), detailDisplay.getY());
+                 gridDisplay.update();
             }
         });
         
