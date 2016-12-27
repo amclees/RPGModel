@@ -10,12 +10,12 @@ public class Terrain implements IGridItem {
 	private int y;
 	private Map<String, Object> properties;
 	private String name;
-	private double movementModifier;
+	private int moveCost;
 	private boolean passable;
 	private String description;
 	private String imagePath;
 	
-	public Terrain(int x, int y, String name, String description, boolean passable, double movementModifier,
+	public Terrain(int x, int y, String name, String description, boolean passable, int moveCost,
 			String imagePath) {
 		super();
 		this.x = x;
@@ -23,7 +23,7 @@ public class Terrain implements IGridItem {
 		this.name = name;
 		this.description = description;
 		this.passable = passable;
-		this.movementModifier = movementModifier;
+		this.moveCost = moveCost;
 		this.imagePath = imagePath;
 	}
 
@@ -71,14 +71,6 @@ public class Terrain implements IGridItem {
 		return Double.MAX_VALUE * -1;
 	}
 
-	public double getMovementModifier() {
-		return movementModifier;
-	}
-
-	public void setMovementModifier(double movementModifier) {
-		this.movementModifier = movementModifier;
-	}
-
 	public boolean isPassable() {
 		return passable;
 	}
@@ -105,6 +97,14 @@ public class Terrain implements IGridItem {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public int getMoveCost() {
+		return moveCost;
+	}
+
+	public void setMoveCost(int moveCost) {
+		this.moveCost = moveCost;
 	}
 	
 

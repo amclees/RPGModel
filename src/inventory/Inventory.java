@@ -1,5 +1,6 @@
 package inventory;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,12 +8,12 @@ import java.util.Map;
 
 import environment.IGridItem;
 
-public class Inventory extends Item {
+public class Inventory implements Serializable {
+	private static final long serialVersionUID = -1576521236862039739L;
 	private List<IItem> inventory;
 	private Map<IItem, Integer> quantity;
 	
-	public Inventory(String name) {
-		super(name, 0.0d, "");
+	public Inventory() {
 		inventory = new LinkedList<IItem>();
 		quantity = new HashMap<IItem, Integer>();
 	}
@@ -65,5 +66,13 @@ public class Inventory extends Item {
 	
 	public List<IItem> getItems() {
 		return this.inventory;
+	}
+	
+	public double getWeight() {
+		double weight = 0.0d;
+		for(IItem item : this.inventory) {
+			weight += this.quantity.get(item) * item.getWeight();
+		}
+		return weight;
 	}
 }

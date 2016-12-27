@@ -37,6 +37,7 @@ public class Main extends Application {
 	Text text;
 	TextDisplay textDisplay;
 	GridDisplay gridDisplay;
+	int round = 1;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -80,6 +81,7 @@ public class Main extends Application {
 	       
         nextRound.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
+            	 textDisplay.print("\nRound " + round++ + "\n");
             	 combat.round();
             	 textScroll.setVvalue(1);
                  updateDetail();

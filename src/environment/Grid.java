@@ -26,9 +26,6 @@ public class Grid {
 		return grid.get(Layer.CHARACTER).length;
 	}
 	
-	/*
-	 * Modifications to allow for different storage types go here, need inventory
-	 */
 	public IGridItem getElement(int x, int y, Layer layer) throws ArrayIndexOutOfBoundsException {
 		return grid.get(layer)[x][y];
 	}
@@ -74,6 +71,7 @@ public class Grid {
 	}
 	
 	public List<ICharacter> getCharacters() {
+		//TODO cache current characters for better performance on sparse grids
 		IGridItem[][] grid = this.grid.get(Layer.CHARACTER);
 		List<ICharacter> list = new LinkedList<ICharacter>();
 		for(IGridItem[] row : grid) {
@@ -87,4 +85,25 @@ public class Grid {
 		return list;
 	}
 	
+	public boolean hasCharacter(int x, int y) {
+		if(this.getElement(x, y, Layer.CHARACTER) == null) return false;
+		else return true;
+		
+	}
+	
+	public boolean isClear(int x, int y) {
+		boolean clear = true;
+		Terrain terrain = (Terrain)this.getElement(x, y, Layer.TERRAIN);
+		if(terrain != null) clear = clear && terrain.isPassable();
+		clear = clear && this.getElement(x, y, Layer.CHARACTER) == null;
+		return clear;
+	}
+	
+	//Returns the cost of entering a point, which is 1 plus the terrain cost
+	public int getCost(int x, int y) {
+		int cost = 1;
+		Terrain terrain = (Terrain)this.getElement(x, y, Layer.TERRAIN);
+		if(terrain != null) cost += terrain.getMoveCost();
+		return cost;
+	}
 }

@@ -72,19 +72,19 @@ public class SimpleCombatTest {
 		
 		CombatManager combat = new CombatManager(grid, new TextDisplay(new Text()));
 		
-		Utils.charStatus(grid);
-		Utils.gridStatus(grid, Layer.CHARACTER);
+		TestUtils.charStatus(grid);
+		TestUtils.gridStatus(grid, Layer.CHARACTER);
 		int dur = 5; //Duration in minutes
 		Scanner sc = new Scanner(System.in);
 		for(int i = 0; i < dur * 10; i++) {
 			combat.round();
-			Utils.charStatus(grid);
-			Utils.gridStatus(grid, Layer.CHARACTER);
+			TestUtils.charStatus(grid);
+			TestUtils.gridStatus(grid, Layer.CHARACTER);
 			//sc.nextLine();
 			//if(i % 10 == 0) grid.setElement(6, 6, Layer.CHARACTER, new Human("Bandit", 50.0d, 25, 25, 25, 25, 25, 25, "Bandits"));
 		}
 		System.out.printf("%n%n");
-		Utils.gridStatus(grid, Layer.CORPSE);
+		TestUtils.gridStatus(grid, Layer.CORPSE);
 		
 		
 	}

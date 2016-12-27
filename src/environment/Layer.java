@@ -1,5 +1,5 @@
 package environment;
 
 public enum Layer {
-	CHARACTER, ENVIRONMENT, INVENTORY, CORPSE
+	CHARACTER, TERRAIN, INVENTORY, CORPSE
 }

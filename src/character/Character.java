@@ -15,6 +15,7 @@ import environment.Grid;
 import environment.IGridItem;
 import environment.Layer;
 import environment.MoveAction;
+import environment.Path;
 import inventory.Inventory;
 
 public abstract class Character implements ICharacter {
@@ -41,7 +42,7 @@ public abstract class Character implements ICharacter {
 	protected int x;
 	protected int y;
 	protected String name;
-	private List<int[]> pathtoOldDest;
+	private Path pathToOldDest;
 	private IGridItem oldDest;
 	private Inventory inventory;
 	
@@ -66,7 +67,7 @@ public abstract class Character implements ICharacter {
 		properties = new HashMap<String, Object>();
 		this.xp = 0;
 		this.level = 1;
-		this.inventory = new Inventory(this.getName());
+		this.inventory = new Inventory();
 		this.getGUID();
 	}
 	
@@ -153,15 +154,20 @@ public abstract class Character implements ICharacter {
 	}
 	
 	/* Ideas to improve this:
-	 * Limits the maxNodes to a better number
-	 * Store the previously found path until the destination changes, so that you don't recalculate every time
+	 * Limits the maxNodes to a better numbe
+	 * Asynchronously have all characters path and use an additional verification method inside the MoveAction
 	 * Use concurrent maps and such to multithread this (Will takes quite a while, wait until after other methods)
 	 * 
-	 * There is an issue with pathing. Sometimes NPCs with same target and faction next to each other don't move
+	 * There was an issue with pathing. Sometimes NPCs with same target and faction next to each other would not move
+	 * This appears to have been resolved be verifying it is cleear before using the old path
 	 */
 	private List<int[]> getSteps(IGridItem destination, Grid grid, int range) {
-		List<int[]> path;
-		if(oldDest != destination) {
+		Path path;
+		boolean recalc = destination != this.oldDest;
+		if(this.pathToOldDest != null) {
+			recalc = recalc && pathToOldDest.isClear();
+		}
+		if(recalc) {
 			int destX = destination.getX();
 			int destY = destination.getY();
 			int[] dest = {destX, destY};
@@ -228,23 +234,24 @@ public abstract class Character implements ICharacter {
 				
 	 		} 
 			
-			path = new LinkedList<int[]>();
+			path = new Path(grid);
 			path.add(current);
 			while(bestApproach.containsKey(current)) {
 				current = bestApproach.get(current);
-				path.add(0, current);
+				path.getSteps().add(0, current);
 			}
 			this.oldDest = destination;
-			this.pathtoOldDest = path;
 		} else {
-			path = this.pathtoOldDest;
+			path = pathToOldDest;
 		}
 		
 		List<int[]> steps = new ArrayList<int[]>(this.getSpeed());
 		
-		for(int i = 0; i < this.getSpeed() && i < path.size(); i++) {
-			steps.add(path.get(i));
+		for(int i = 0; i < this.getSpeed() && i < path.getLength(); i++) {
+			steps.add(path.pop());
 		}
+		
+		this.pathToOldDest = path;
 		
 		return steps;
 		

@@ -37,6 +37,8 @@ public class DetailDisplay {
 	public DetailDisplay(Grid grid) {
 		this.grid = grid;
 		this.node = new Label("");
+		this.x = 0;
+		this.y = 0;
 	}
 	
 	public void display(int x, int y) {

@@ -8,6 +8,4 @@ public interface IGridItem extends IItem {
 	void setX(int x);
 	void setY(int y);
 	void neighborChange(Grid grid);
-	
-	
 }

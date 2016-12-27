@@ -6,7 +6,7 @@ import environment.Grid;
 import environment.IGridItem;
 import environment.Layer;
 
-public class Utils {
+public class TestUtils {
 	public static void charStatus(Grid grid) {
 		for(ICharacter c : grid.getCharacters()) {
 			System.out.printf("Level " + c.getLevel() + " " + c.getName() + " (GUID " + c.getGUID() + ") is at (" + c.getX() + ", " + c.getY() + ").%n"
