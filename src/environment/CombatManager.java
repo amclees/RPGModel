@@ -1,53 +1,67 @@
 package environment;
 
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import character.ICharacter;
 import gui.TextDisplay;
 
 public class CombatManager {
-	private Grid grid;
-	private TextDisplay display;
-	
-	public CombatManager(Grid grid, TextDisplay display) {
-		this.grid = grid;
-		this.display = display;
-	}
-	
-	public void round() {
-		List<ICharacter> characters = getTurnOrder();
-		for(ICharacter actor : characters) {
-			Action action = actor.getCombatAction(grid);
-			if(action != null) {
-				action.applyAction(this.display);
-				//SimpleCombatTest.gridStatus(grid);
-			}
-		}
-	}
-	
-	/*
-	 * This method could be improved in performance.
-	 */
-	private List<ICharacter> getTurnOrder() {
-		Map<ICharacter, Integer> initiatives = new HashMap<ICharacter, Integer>();
-		for(ICharacter c : grid.getCharacters()) {
-			initiatives.put(c, c.initiativeRoll());
-		}
-		
-		List<ICharacter> toReturn = new LinkedList<ICharacter>();
-		for(ICharacter c : grid.getCharacters()) {
-			int index = 0;
-			for(ICharacter r : toReturn) {
-				if(initiatives.get(r) > initiatives.get(c)) {
-					index++;
-				}
-			}
-			toReturn.add(index, c);
-		}
-		
-		return toReturn;
-	}
+  private Grid grid;
+  private TextDisplay display;
+  int round;
+
+  public CombatManager(Grid grid, TextDisplay display) {
+    this.grid = grid;
+    this.display = display;
+    this.round = 1;
+  }
+
+  public void round() {
+    display.print("\nRound " + round++ + "\n");
+    Queue<ICharacter> characters = getTurnOrder();
+    while (!characters.isEmpty()) {
+      ICharacter actor = characters.poll();
+      Action action = actor.getCombatAction(grid);
+      if (action != null) {
+        action.applyAction(this.display);
+        // SimpleCombatTest.gridStatus(grid);
+      }
+    }
+  }
+
+  public void round(int times) {
+    for (int i = 0; i < times; i++) {
+      this.round();
+    }
+  }
+
+  // This method's performance issues are fixed
+  private Queue<ICharacter> getTurnOrder() {
+    Map<ICharacter, Integer> initiatives = new HashMap<ICharacter, Integer>();
+    Queue<ICharacter> toReturn = new PriorityQueue<ICharacter>(new TurnComparator(initiatives));
+    for (ICharacter c : grid.getCharacters()) {
+      initiatives.put(c, c.initiativeRoll());
+      toReturn.add(c);
+    }
+
+    return toReturn;
+  }
+
+  private class TurnComparator implements Comparator<ICharacter> {
+    Map<ICharacter, Integer> initiatives;
+
+    public TurnComparator(Map<ICharacter, Integer> initiatives) {
+      this.initiatives = initiatives;
+    }
+
+    @Override
+    public int compare(ICharacter c1, ICharacter c2) {
+      return initiatives.get(c2) - initiatives.get(c1);
+    }
+
+  }
 }

@@ -75,4 +75,8 @@ public class Inventory implements Serializable {
 		}
 		return weight;
 	}
+	
+	public int size() {
+	  return this.getItems().size();
+	}
 }

@@ -1,10 +1,15 @@
 package gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import inventory.IItem;
 import inventory.Inventory;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -12,6 +17,7 @@ import javafx.scene.text.TextAlignment;
 public class InventoryDisplay {
 	private Inventory inventory;
 	private Node display;
+	private List<ItemDisplay> itemDisplays;
 	
 	public InventoryDisplay(Inventory inventory) {
 		this.inventory = inventory;
@@ -19,23 +25,22 @@ public class InventoryDisplay {
 	}
 	
 	public void update() {
-		String invDis = "";
+	  this.itemDisplays = new ArrayList<ItemDisplay>(this.inventory.size());
+	  VBox itemList = new VBox();
+	  
+		
 		for(IItem item : inventory.getItems()) {
-			invDis += inventory.getQuantity(item) + " of GUID " + item.getGUID() + " " + item.getName() 
-			+ " with description: " + item.getDescription() + "\n";
+			ItemDisplay display = new ItemDisplay(item, inventory.getQuantity(item));		
+			itemList.getChildren().add(display.getNode());
+			itemDisplays.add(display);
 		}
 		
-		Text text = new Text(invDis);
-		
-		text.setFont(new Font(18));
-		//text.setWrappingWidth(400);
-		text.setTextAlignment(TextAlignment.LEFT);
-		
-		ScrollPane scroll = new ScrollPane(text);
+		ScrollPane scroll = new ScrollPane(itemList);
 		scroll.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		scroll.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		scroll.setFitToHeight(true);
 		scroll.setFitToWidth(true);
+		scroll.setPadding(new Insets(10));
 		
 		this.display = scroll;
 	}
