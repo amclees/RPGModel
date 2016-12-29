@@ -108,7 +108,7 @@ public class Grid {
     return clear;
   }
 
-  // Returns the cost of entering a point, which is 1 plus the terrain cost
+  // Returns the terrain cost for x, y
   public int getCost(int x, int y) {
     int cost = 1;
     Terrain terrain = (Terrain) this.getElement(x, y, Layer.TERRAIN);

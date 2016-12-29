@@ -20,9 +20,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
-/*
- * TODO Use a style sheet to format this
- */
 public class Main extends Application {
   VBox main;
   Grid grid;

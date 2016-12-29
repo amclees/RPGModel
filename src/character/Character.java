@@ -44,7 +44,7 @@ public abstract class Character implements ICharacter {
   protected int y;
   protected String name;
   private Path pathToOldDest;
-  private IGridItem oldDest;
+  private int[] oldDestCoords;
   private Inventory inventory;
 
   public Inventory getInventory() {
@@ -153,10 +153,15 @@ public abstract class Character implements ICharacter {
       // target.getName());
       action = new AttackAction(this, target, grid, weapon.getEquipmentSlot());
     } else {
-      // System.out.println(this.getName() + " is moving towards " +
-      // target.getName());
-      List<int[]> steps = this.getSteps(target, grid, weapon.getRange());
-      action = new MoveAction(this, grid, steps);
+       //System.out.println(this.getName() + " is moving towards " +
+       //target.getName());
+      Path path = this.getPath(target, grid, weapon.getRange());
+      /*if(this.getName().equals("Guts")) {
+        for(int[] step : path.getSteps()) {
+          System.out.println(step[0] + ", " + step[1]);
+        }
+      }*/
+      action = new MoveAction(this, grid, path);
     }
 
     return action;
@@ -172,11 +177,13 @@ public abstract class Character implements ICharacter {
    * faction next to each other would not move. This appears to have been
    * resolved be verifying it is clear before using the old path
    */
-  private List<int[]> getSteps(IGridItem destination, Grid grid, int range) {
+  private Path getPath(IGridItem destination, Grid grid, int range) {
     Path path;
-    boolean recalc = destination != this.oldDest;
-    if (this.pathToOldDest != null) {
-      recalc = recalc && pathToOldDest.isClear();
+    boolean recalc = true;
+    if (this.pathToOldDest != null && oldDestCoords != null) {
+      if(pathToOldDest.isClear() && (destination.getX() == oldDestCoords[0] && destination.getY() == oldDestCoords[1])) {
+        recalc = false;
+      }
     }
     if (recalc) {
       int destX = destination.getX();
@@ -235,11 +242,12 @@ public abstract class Character implements ICharacter {
           // System.out.println(neighbor[0] + ", " + neighbor[1]);
           if (checkedCoords.contains(neighbor))
             continue;
-          int costToNeighbor = dist(current, neighbor) + costToCoord.get(current);
-          int oldCostToNeighbor = costToCoord.containsKey(neighbor) ? costToCoord.get(neighbor) : Integer.MAX_VALUE;
-          // System.out.println("For neighbor at " + neighbor[0] + ", " +
-          // neighbor[1] + ": " + costToNeighbor + " is cost to neighbor. " +
-          // oldCostToNeighbor + " is previous cost.");
+          int costToNeighbor = neighborDist(current, neighbor, grid) + costToCoord.get(current);
+          if(!grid.isClear(neighbor[0], neighbor[1])) costToNeighbor = Integer.MAX_VALUE;
+          int oldCostToNeighbor = costToCoord.containsKey(neighbor) ? costToCoord.get(neighbor) : Integer.MAX_VALUE - 1;
+           //System.out.println("For neighbor at " + neighbor[0] + ", " +
+           //neighbor[1] + ": " + costToNeighbor + " is cost to neighbor. " +
+           //oldCostToNeighbor + " is previous cost.");
           if (!uncheckedCoords.contains(neighbor))
             uncheckedCoords.add(neighbor);
           else if (costToNeighbor >= oldCostToNeighbor)
@@ -259,24 +267,16 @@ public abstract class Character implements ICharacter {
         current = bestApproach.get(current);
         path.getSteps().add(0, current);
       }
-      this.oldDest = destination;
+      
+      int[] arrayConstant = { destination.getX(), destination.getY() }; //Array constants can only be used in initializers
+      this.oldDestCoords = arrayConstant;
+      
+      this.pathToOldDest = path;
     } else {
       path = pathToOldDest;
     }
 
-    List<int[]> steps = new ArrayList<int[]>(this.getSpeed());
-
-    for (int i = 0; i < this.getSpeed() && !path.isEmpty(); i++) {
-      // System.out.println("StepCounter-" + i + "-CharacterSpeed-" +
-      // this.getSpeed() + "-PathLength-" + path.getLength());
-      steps.add(path.pop());
-    }
-    // System.out.println("End Path for " + this.getName());
-
-    this.pathToOldDest = path;
-
-    return steps;
-
+    return path;
   }
 
   public static int estimateCost(int[] neighbor, int[] dest) {
@@ -285,6 +285,10 @@ public abstract class Character implements ICharacter {
 
   public static int dist(int[] point1, int[] point2) {
     return Math.abs(point1[0] - point2[0]) + Math.abs(point1[1] - point2[1]);
+  }
+  
+  private int neighborDist(int[] point1, int[] point2, Grid grid) {
+    return grid.getCost(point2[0], point2[1]) +  dist(point1, point2);
   }
 
   public String getName() {
