@@ -1,8 +1,7 @@
 package character;
 
-import core.Material;
-
 public class Human extends Humanoid {
+  private static final long serialVersionUID = 5209803077405543449L;
 
   public Human(String name, double weight, int strength, int dexterity, int wisdom, int intelligence, int charisma,
       int constitution, String faction) {
@@ -10,7 +9,7 @@ public class Human extends Humanoid {
     this.name = name;
     this.size = Size.MEDIUM;
     this.weight = weight;
-    speed = 5;
+    this.speed = 5;
 
     this.strength = strength;
     this.dexterity = dexterity;
@@ -26,8 +25,21 @@ public class Human extends Humanoid {
 
     if (faction == null)
       this.faction = "human";
-    else
-      this.faction = faction;
+    else this.faction = faction;
+  }
+
+  public Human(Template template) {
+    super(template);
+
+    this.size = Size.MEDIUM;
+    this.speed = 5;
+    this.xpToNextLevel = 1000;
+
+    this.loadStandardTemplate(template);
+
+    this.HP = constitution * 2;
+    this.maxHP = HP;
+    if (this.faction == null) this.faction = "human";
   }
 
 }

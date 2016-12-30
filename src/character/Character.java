@@ -1,10 +1,12 @@
 package character;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import core.Dice;
 import core.EquipmentRegistry;
@@ -16,7 +18,9 @@ import environment.IGridItem;
 import environment.Layer;
 import environment.MoveAction;
 import environment.Path;
+import inventory.IItem;
 import inventory.Inventory;
+import inventory.LootTable;
 
 public abstract class Character implements ICharacter {
   protected static final long serialVersionUID = -32193334475144657L;
@@ -39,13 +43,83 @@ public abstract class Character implements ICharacter {
   protected int intelligence;
   protected int charisma;
   private Map<String, Object> properties; // Note that properties DO NOT
-                                          // TRANSFER on copy
+                                         // TRANSFER on copy
   protected int x;
   protected int y;
   protected String name;
   private Path pathToOldDest;
   private int[] oldDestCoords;
   private Inventory inventory;
+
+  public void loadLootTable(LootTable table) {
+    Random rand = new Random();
+    for(IItem item : table.getAllItems()) {
+      if(rand.nextDouble() < table.getLikelihood(item)) {
+        int[] range = table.getQuantityRange(item);
+        this.inventory.addItem(item, (int) Math.round((Math.random() * (range[1] - range[0])) + range[0])); 
+      }
+    }
+  }
+
+  protected void loadStandardTemplate(Template template) {
+    this.faction = template.getFaction();
+
+    Random rand = new Random();
+
+    int[] weightRange = template.getWeightRange();
+    this.weight = (rand.nextGaussian() * (weightRange[1] - weightRange[0])) + weightRange[0];
+
+    int[] stats = getVariedStats(template.getBaseStats(), template.getVariation());
+    this.loadStats(stats);
+
+    int[] xpRange = template.getXpRange();
+    this.addXP((int) Math.round(Math.random() * (xpRange[1] - xpRange[0]) + xpRange[0]));
+
+    this.name = this.getRandomName(template.getNames());
+
+    this.loadLootTable(template.getLootTable());
+  }
+
+  protected int[] getVariedStats(int[] originalStats, double statVariation) {
+    Random rand = new Random();
+    int[] stats = Arrays.copyOf(originalStats, originalStats.length);
+    for (int stat : stats) {
+      stat = (int) Math.round((rand.nextGaussian() * statVariation * stat) + (stat - (stat * statVariation)));
+    }
+    return stats;
+  }
+
+  protected void loadStats(int[] stats) {
+    this.strength = StatUtil.getStrength(stats);
+    this.dexterity = StatUtil.getDexterity(stats);
+    this.wisdom = StatUtil.getWisdom(stats);
+    this.intelligence = StatUtil.getIntelligence(stats);
+    this.charisma = StatUtil.getCharisma(stats);
+    this.constitution = StatUtil.getConstitution(stats);
+  }
+
+  protected String getRandomName(Map<String, Double> nameMap) {
+    List<double[]> nameRanges = new ArrayList<double[]>(nameMap.size());
+    List<String> names = new ArrayList<String>(nameMap.size());
+    double nameMax = 0.0d;
+    for (String key : nameMap.keySet()) {
+      double weight = nameMap.get(key);
+      names.add(key);
+      double lowerLimit = nameRanges.isEmpty() ? 0.0d : nameRanges.get(nameRanges.size() - 1)[1];
+      double[] nameRange = { lowerLimit, lowerLimit + weight };
+      nameRanges.add(nameRange);
+      nameMax += weight;
+    }
+    double nameValue = Math.random() * nameMax;
+    String name = "Unnamed";
+    for (int i = 0; i < nameRanges.size(); i++) {
+      double[] nameRange = nameRanges.get(i);
+      if (nameValue >= nameRange[0] && nameValue <= nameRange[1]) {
+        name = names.get(i);
+      }
+    }
+    return name;
+  }
 
   public Inventory getInventory() {
     return this.inventory;
@@ -71,6 +145,10 @@ public abstract class Character implements ICharacter {
     this.getGUID();
   }
 
+  public Character(Template template) {
+    this();
+  }
+
   public void loseHP(int HP) {
     this.HP -= HP;
   }
@@ -92,24 +170,19 @@ public abstract class Character implements ICharacter {
     Map<ICharacter, Integer> characterToDistance = new HashMap<ICharacter, Integer>();
 
     for (ICharacter c : grid.getCharacters()) {
-      if (c.equals(this))
-        continue;
-      if (c.getHP() < 1)
-        continue;
-      if (c.getFaction().equals(this.getFaction()))
-        continue;
+      if (c.equals(this)) continue;
+      if (c.getHP() < 1) continue;
+      if (c.getFaction().equals(this.getFaction())) continue;
 
       int distance = Math.abs(this.getX() - c.getX()) + Math.abs(this.getY() - c.getY());
       characterToDistance.put(c, distance);
       int index = 0;
       for (ICharacter r : charactersByDistance) {
-        if (characterToDistance.get(r) < distance)
-          index++;
+        if (characterToDistance.get(r) < distance) index++;
       }
       charactersByDistance.add(index, c);
     }
-    if (charactersByDistance.size() == 0)
-      return null;
+    if (charactersByDistance.size() == 0) return null;
 
     ICharacter target = null;
 
@@ -121,8 +194,7 @@ public abstract class Character implements ICharacter {
           if (j == 0 || i == 0) {
             int[] neighbor = { i + current[0], j + current[1] };
             try {
-              if (grid.getElement(neighbor[0], neighbor[1], Layer.CHARACTER) == null)
-                neighbors.add(neighbor);
+              if (grid.getElement(neighbor[0], neighbor[1], Layer.CHARACTER) == null) neighbors.add(neighbor);
             } catch (ArrayIndexOutOfBoundsException e) {
             }
           }
@@ -133,8 +205,7 @@ public abstract class Character implements ICharacter {
         break;
       }
     }
-    if (target == null)
-      return null;
+    if (target == null) return null;
 
     Equipable weapon = EquipmentRegistry.getEquipment("fist");
 
@@ -153,14 +224,16 @@ public abstract class Character implements ICharacter {
       // target.getName());
       action = new AttackAction(this, target, grid, weapon.getEquipmentSlot());
     } else {
-       //System.out.println(this.getName() + " is moving towards " +
-       //target.getName());
+      //System.out.println(this.getName() + " is moving towards " +
+      //target.getName());
       Path path = this.getPath(target, grid, weapon.getRange());
-      /*if(this.getName().equals("Guts")) {
-        for(int[] step : path.getSteps()) {
-          System.out.println(step[0] + ", " + step[1]);
-        }
-      }*/
+      /*
+       * if(this.getName().equals("Guts")) {
+       * for(int[] step : path.getSteps()) {
+       * System.out.println(step[0] + ", " + step[1]);
+       * }
+       * }
+       */
       action = new MoveAction(this, grid, path);
     }
 
@@ -181,7 +254,8 @@ public abstract class Character implements ICharacter {
     Path path;
     boolean recalc = true;
     if (this.pathToOldDest != null && oldDestCoords != null) {
-      if(pathToOldDest.isClear() && (destination.getX() == oldDestCoords[0] && destination.getY() == oldDestCoords[1])) {
+      if (pathToOldDest.isClear()
+          && (destination.getX() == oldDestCoords[0] && destination.getY() == oldDestCoords[1])) {
         recalc = false;
       }
     }
@@ -204,8 +278,7 @@ public abstract class Character implements ICharacter {
       int[] current = null;
       int maxNodes = dist(dest, here) * 3;
       while (uncheckedCoords.size() != 0) {
-        if (maxNodes < 0)
-          break;
+        if (maxNodes < 0) break;
         maxNodes--;
         current = null;
         int currentCost = Integer.MAX_VALUE;
@@ -230,8 +303,7 @@ public abstract class Character implements ICharacter {
             if (!(i == 0 && j == 0)) {
               int[] neighbor = { i + current[0], j + current[1] };
               try {
-                if (grid.getElement(neighbor[0], neighbor[1], Layer.CHARACTER) == null)
-                  neighbors.add(neighbor);
+                if (grid.getElement(neighbor[0], neighbor[1], Layer.CHARACTER) == null) neighbors.add(neighbor);
               } catch (ArrayIndexOutOfBoundsException e) {
               }
             }
@@ -240,18 +312,16 @@ public abstract class Character implements ICharacter {
 
         for (int[] neighbor : neighbors) {
           // System.out.println(neighbor[0] + ", " + neighbor[1]);
-          if (checkedCoords.contains(neighbor))
-            continue;
+          if (checkedCoords.contains(neighbor)) continue;
           int costToNeighbor = neighborDist(current, neighbor, grid) + costToCoord.get(current);
-          if(!grid.isClear(neighbor[0], neighbor[1])) costToNeighbor = Integer.MAX_VALUE;
+          if (!grid.isClear(neighbor[0], neighbor[1])) costToNeighbor = Integer.MAX_VALUE;
           int oldCostToNeighbor = costToCoord.containsKey(neighbor) ? costToCoord.get(neighbor) : Integer.MAX_VALUE - 1;
-           //System.out.println("For neighbor at " + neighbor[0] + ", " +
-           //neighbor[1] + ": " + costToNeighbor + " is cost to neighbor. " +
-           //oldCostToNeighbor + " is previous cost.");
+          //System.out.println("For neighbor at " + neighbor[0] + ", " +
+          //neighbor[1] + ": " + costToNeighbor + " is cost to neighbor. " +
+          //oldCostToNeighbor + " is previous cost.");
           if (!uncheckedCoords.contains(neighbor))
             uncheckedCoords.add(neighbor);
-          else if (costToNeighbor >= oldCostToNeighbor)
-            continue;
+          else if (costToNeighbor >= oldCostToNeighbor) continue;
 
           bestApproach.put(neighbor, current);
           costToCoord.put(neighbor, costToNeighbor);
@@ -267,10 +337,10 @@ public abstract class Character implements ICharacter {
         current = bestApproach.get(current);
         path.getSteps().add(0, current);
       }
-      
+
       int[] arrayConstant = { destination.getX(), destination.getY() }; //Array constants can only be used in initializers
       this.oldDestCoords = arrayConstant;
-      
+
       this.pathToOldDest = path;
     } else {
       path = pathToOldDest;
@@ -286,9 +356,9 @@ public abstract class Character implements ICharacter {
   public static int dist(int[] point1, int[] point2) {
     return Math.abs(point1[0] - point2[0]) + Math.abs(point1[1] - point2[1]);
   }
-  
+
   private int neighborDist(int[] point1, int[] point2, Grid grid) {
-    return grid.getCost(point2[0], point2[1]) +  dist(point1, point2);
+    return grid.getCost(point2[0], point2[1]) + dist(point1, point2);
   }
 
   public String getName() {
