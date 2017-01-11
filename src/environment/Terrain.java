@@ -2,8 +2,6 @@ package environment;
 
 import java.util.Map;
 
-import core.Material;
-
 public class Terrain implements IGridItem {
   private static final long serialVersionUID = -5900761463881733825L;
   private int x;

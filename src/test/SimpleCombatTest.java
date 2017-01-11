@@ -6,7 +6,7 @@ import character.EquipmentSlot;
 import character.Human;
 import character.ICharacter;
 import core.EquipmentRegistry;
-import core.MainRegistry;
+import core.RegistryManager;
 import core.NPCRegistry;
 import environment.CombatManager;
 import environment.Grid;
@@ -16,7 +16,7 @@ import javafx.scene.text.Text;
 
 public class SimpleCombatTest {
 	public static void main(String[] args) throws InterruptedException {
-		MainRegistry.init();
+		RegistryManager.init();
 		
 		Grid grid = new Grid(50, 50);
 		ICharacter h1 = NPCRegistry.getNPC("Guts");

@@ -10,12 +10,12 @@ import java.util.Random;
 
 import core.Dice;
 import core.EquipmentRegistry;
-import core.Material;
 import environment.Action;
 import environment.AttackAction;
 import environment.Grid;
 import environment.IGridItem;
 import environment.Layer;
+import environment.Material;
 import environment.MoveAction;
 import environment.Path;
 import inventory.IItem;

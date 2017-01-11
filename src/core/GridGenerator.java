@@ -8,7 +8,7 @@ import environment.Layer;
 
 public class GridGenerator {
   public static Grid makeGrid() {
-    MainRegistry.init();
+    RegistryManager.init();
     Grid grid = new Grid(20, 20);
     ICharacter h1 = NPCRegistry.getNPC("Guts");
     h1.equip(EquipmentRegistry.getEquipment("Gut's Sword"), EquipmentSlot.RIGHTHAND);

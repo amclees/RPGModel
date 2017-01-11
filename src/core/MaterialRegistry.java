@@ -3,6 +3,8 @@ package core;
 import java.util.HashMap;
 import java.util.Map;
 
+import environment.Material;
+
 public class MaterialRegistry {
   private static Map<String, Material> materials;
 

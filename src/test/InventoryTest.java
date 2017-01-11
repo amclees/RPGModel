@@ -1,13 +1,13 @@
 package test;
 
 import core.ItemRegistry;
-import core.MainRegistry;
+import core.RegistryManager;
 import inventory.IItem;
 import inventory.Inventory;
 
 public class InventoryTest {
 	public static void main(String[] args) {
-		MainRegistry.init();
+		RegistryManager.init();
 		
 		Inventory inv = new Inventory();
 		IItem nickel = ItemRegistry.getItem("Nickel");

@@ -3,7 +3,7 @@ package test;
 import character.Human;
 import character.ICharacter;
 import core.EquipmentRegistry;
-import core.MainRegistry;
+import core.RegistryManager;
 import core.MaterialRegistry;
 import environment.CombatManager;
 import environment.Grid;
@@ -14,7 +14,7 @@ import javafx.scene.text.Text;
 public class MovementTest {
 
 	public static void main(String[] args) {
-		MainRegistry.init();
+		RegistryManager.init();
 		Grid grid = new Grid(10, 10);
 		Human h1 = new Human("Guts", 60.0d, 90, 40, 30, 25, 21, 65, "Bank of the Hawk");
 		Human h2 = new Human("Griffith", 55.0d, 45, 80, 40, 40, 45, 30, "Band of the Hawk");
