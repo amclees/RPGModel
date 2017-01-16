@@ -3,8 +3,8 @@ package environment;
 import character.Equipable;
 import character.EquipmentSlot;
 import character.ICharacter;
+import character.Size;
 import core.Dice;
-import core.EquipmentRegistry;
 import gui.TextDisplay;
 
 public class AttackAction implements Action {
@@ -23,7 +23,7 @@ public class AttackAction implements Action {
 		this.grid = grid;
 		this.weapon = attacker.getEquipmentInSlot(weapon);
 		if(this.weapon == null) {
-			this.weapon = EquipmentRegistry.getEquipment("fist");
+			this.weapon = new Equipable("fist", EquipmentSlot.NONE, Size.ANY, 0.0d, 0, 0, 1, 4, 1, "A fist");
 		}
 	}
 	

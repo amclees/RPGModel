@@ -3,7 +3,7 @@ package character;
 import java.util.LinkedList;
 import java.util.List;
 
-import core.MaterialRegistry;
+import environment.Material;
 
 public abstract class Humanoid extends Character {
   private static final long serialVersionUID = -4243610666877934543L;
@@ -19,13 +19,13 @@ public abstract class Humanoid extends Character {
   public Humanoid() {
     super();
     noneEquipable = new LinkedList<Equipable>();
-    this.material = MaterialRegistry.getMaterial("flesh");
+    this.material = new Material("flesh", 0.985, 0.05, 0.1, 0);
   }
 
   public Humanoid(Template template) {
     super(template);
     noneEquipable = new LinkedList<Equipable>();
-    this.material = MaterialRegistry.getMaterial("flesh");
+    this.material = new Material("flesh", 0.985, 0.05, 0.1, 0);
   }
 
   public void equip(Equipable toEquip, EquipmentSlot slot) {

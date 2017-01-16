@@ -1,0 +1,13 @@
+<character>
+  <type>human</type>
+  <name>George</name>
+  <stats>
+    <str>25</str>
+    <dex>25</dex>
+    <wis>25</wis>
+    <int>25</int>
+    <cha>25</cha>
+    <con>25</con>
+  </stats>
+  <faction>George's Faction</faction>
+</character>

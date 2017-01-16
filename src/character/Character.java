@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Random;
 
 import core.Dice;
-import core.EquipmentRegistry;
 import environment.Action;
 import environment.AttackAction;
 import environment.Grid;
@@ -207,7 +206,7 @@ public abstract class Character implements ICharacter {
     }
     if (target == null) return null;
 
-    Equipable weapon = EquipmentRegistry.getEquipment("fist");
+    Equipable weapon = new Equipable("fist", EquipmentSlot.NONE, Size.ANY, 0.0d, 0, 0, 1, 4, 1, "A fist");
 
     for (Equipable e : this.getEquipment()) {
       int[] hereRange = { this.x, this.y };
