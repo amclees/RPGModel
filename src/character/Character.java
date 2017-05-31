@@ -42,7 +42,7 @@ public abstract class Character implements ICharacter {
   protected int intelligence;
   protected int charisma;
   private Map<String, Object> properties; // Note that properties DO NOT
-                                         // TRANSFER on copy
+                                          // TRANSFER on copy
   protected int x;
   protected int y;
   protected String name;
@@ -52,10 +52,10 @@ public abstract class Character implements ICharacter {
 
   public void loadLootTable(LootTable table) {
     Random rand = new Random();
-    for(IItem item : table.getAllItems()) {
-      if(rand.nextDouble() < table.getLikelihood(item)) {
+    for (IItem item : table.getAllItems()) {
+      if (rand.nextDouble() < table.getLikelihood(item)) {
         int[] range = table.getQuantityRange(item);
-        this.inventory.addItem(item, (int) Math.round((Math.random() * (range[1] - range[0])) + range[0])); 
+        this.inventory.addItem(item, (int) Math.round((Math.random() * (range[1] - range[0])) + range[0]));
       }
     }
   }
@@ -169,19 +169,24 @@ public abstract class Character implements ICharacter {
     Map<ICharacter, Integer> characterToDistance = new HashMap<ICharacter, Integer>();
 
     for (ICharacter c : grid.getCharacters()) {
-      if (c.equals(this)) continue;
-      if (c.getHP() < 1) continue;
-      if (c.getFaction().equals(this.getFaction())) continue;
+      if (c.equals(this))
+        continue;
+      if (c.getHP() < 1)
+        continue;
+      if (c.getFaction().equals(this.getFaction()))
+        continue;
 
       int distance = Math.abs(this.getX() - c.getX()) + Math.abs(this.getY() - c.getY());
       characterToDistance.put(c, distance);
       int index = 0;
       for (ICharacter r : charactersByDistance) {
-        if (characterToDistance.get(r) < distance) index++;
+        if (characterToDistance.get(r) < distance)
+          index++;
       }
       charactersByDistance.add(index, c);
     }
-    if (charactersByDistance.size() == 0) return null;
+    if (charactersByDistance.size() == 0)
+      return null;
 
     ICharacter target = null;
 
@@ -193,7 +198,8 @@ public abstract class Character implements ICharacter {
           if (j == 0 || i == 0) {
             int[] neighbor = { i + current[0], j + current[1] };
             try {
-              if (grid.getElement(neighbor[0], neighbor[1], Layer.CHARACTER) == null) neighbors.add(neighbor);
+              if (grid.getElement(neighbor[0], neighbor[1], Layer.CHARACTER) == null)
+                neighbors.add(neighbor);
             } catch (ArrayIndexOutOfBoundsException e) {
             }
           }
@@ -204,7 +210,8 @@ public abstract class Character implements ICharacter {
         break;
       }
     }
-    if (target == null) return null;
+    if (target == null)
+      return null;
 
     Equipable weapon = new Equipable("fist", EquipmentSlot.NONE, Size.ANY, 0.0d, 0, 0, 1, 4, 1, "A fist");
 
@@ -223,15 +230,12 @@ public abstract class Character implements ICharacter {
       // target.getName());
       action = new AttackAction(this, target, grid, weapon.getEquipmentSlot());
     } else {
-      //System.out.println(this.getName() + " is moving towards " +
-      //target.getName());
+      // System.out.println(this.getName() + " is moving towards " +
+      // target.getName());
       Path path = this.getPath(target, grid, weapon.getRange());
       /*
-       * if(this.getName().equals("Guts")) {
-       * for(int[] step : path.getSteps()) {
-       * System.out.println(step[0] + ", " + step[1]);
-       * }
-       * }
+       * if(this.getName().equals("Guts")) { for(int[] step : path.getSteps()) {
+       * System.out.println(step[0] + ", " + step[1]); } }
        */
       action = new MoveAction(this, grid, path);
     }
@@ -277,7 +281,8 @@ public abstract class Character implements ICharacter {
       int[] current = null;
       int maxNodes = dist(dest, here) * 3;
       while (uncheckedCoords.size() != 0) {
-        if (maxNodes < 0) break;
+        if (maxNodes < 0)
+          break;
         maxNodes--;
         current = null;
         int currentCost = Integer.MAX_VALUE;
@@ -302,7 +307,8 @@ public abstract class Character implements ICharacter {
             if (!(i == 0 && j == 0)) {
               int[] neighbor = { i + current[0], j + current[1] };
               try {
-                if (grid.getElement(neighbor[0], neighbor[1], Layer.CHARACTER) == null) neighbors.add(neighbor);
+                if (grid.getElement(neighbor[0], neighbor[1], Layer.CHARACTER) == null)
+                  neighbors.add(neighbor);
               } catch (ArrayIndexOutOfBoundsException e) {
               }
             }
@@ -311,16 +317,19 @@ public abstract class Character implements ICharacter {
 
         for (int[] neighbor : neighbors) {
           // System.out.println(neighbor[0] + ", " + neighbor[1]);
-          if (checkedCoords.contains(neighbor)) continue;
+          if (checkedCoords.contains(neighbor))
+            continue;
           int costToNeighbor = neighborDist(current, neighbor, grid) + costToCoord.get(current);
-          if (!grid.isClear(neighbor[0], neighbor[1])) costToNeighbor = Integer.MAX_VALUE;
+          if (!grid.isClear(neighbor[0], neighbor[1]))
+            costToNeighbor = Integer.MAX_VALUE;
           int oldCostToNeighbor = costToCoord.containsKey(neighbor) ? costToCoord.get(neighbor) : Integer.MAX_VALUE - 1;
-          //System.out.println("For neighbor at " + neighbor[0] + ", " +
-          //neighbor[1] + ": " + costToNeighbor + " is cost to neighbor. " +
-          //oldCostToNeighbor + " is previous cost.");
+          // System.out.println("For neighbor at " + neighbor[0] + ", " +
+          // neighbor[1] + ": " + costToNeighbor + " is cost to neighbor. " +
+          // oldCostToNeighbor + " is previous cost.");
           if (!uncheckedCoords.contains(neighbor))
             uncheckedCoords.add(neighbor);
-          else if (costToNeighbor >= oldCostToNeighbor) continue;
+          else if (costToNeighbor >= oldCostToNeighbor)
+            continue;
 
           bestApproach.put(neighbor, current);
           costToCoord.put(neighbor, costToNeighbor);
@@ -337,7 +346,14 @@ public abstract class Character implements ICharacter {
         path.getSteps().add(0, current);
       }
 
-      int[] arrayConstant = { destination.getX(), destination.getY() }; //Array constants can only be used in initializers
+      int[] arrayConstant = { destination.getX(), destination.getY() }; // Array
+                                                                        // constants
+                                                                        // can
+                                                                        // only
+                                                                        // be
+                                                                        // used
+                                                                        // in
+                                                                        // initializers
       this.oldDestCoords = arrayConstant;
 
       this.pathToOldDest = path;

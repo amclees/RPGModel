@@ -15,7 +15,7 @@ public class XMLResourceLoader implements IResourceLoader {
   @Override
   public void fetch() {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -60,5 +60,4 @@ public class XMLResourceLoader implements IResourceLoader {
     return null;
   }
 
-	
 }

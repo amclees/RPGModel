@@ -9,14 +9,14 @@ public class Template {
   private int[] baseStats;
   private LootTable lootTable;
   private String faction;
-  private Map<String, Double> names; //Double indicates weight in random choice
+  private Map<String, Double> names; // Double indicates weight in random choice
   private int[] weightRange;
   private int[] xpRange;
-  
-  //Don't need equipment, use auto-equip
-  
-  public Template(int[] baseStats, double statVariation, LootTable lootTable, Map<String, Double> names, int[] weightRange,
-      String faction, int[] xpRange) {
+
+  // Don't need equipment, use auto-equip
+
+  public Template(int[] baseStats, double statVariation, LootTable lootTable, Map<String, Double> names,
+      int[] weightRange, String faction, int[] xpRange) {
     this.baseStats = baseStats;
     this.statVariation = statVariation;
     this.lootTable = lootTable;
@@ -53,5 +53,5 @@ public class Template {
   public int[] getWeightRange() {
     return weightRange;
   }
-  
+
 }

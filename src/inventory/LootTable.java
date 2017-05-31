@@ -15,7 +15,7 @@ public class LootTable {
     this.quantityRanges = quantityRanges;
     this.likelihoodOfAppearence = likelihoodOfAppearence;
   }
-  
+
   public LootTable() {
     this.allItems = new LinkedList<IItem>();
     this.quantityRanges = new HashMap<IItem, int[]>();
@@ -25,11 +25,11 @@ public class LootTable {
   public List<IItem> getAllItems() {
     return allItems;
   }
-  
+
   public int[] getQuantityRange(IItem item) {
     return this.quantityRanges.get(item);
   }
-  
+
   public double getLikelihood(IItem item) {
     return this.likelihoodOfAppearence.get(item);
   }
@@ -41,7 +41,7 @@ public class LootTable {
   public Map<IItem, Double> getLikelihoodOfAppearenceMap() {
     return likelihoodOfAppearence;
   }
-  
+
   public void addItem(IItem item, int[] quantityRanges, double likeliHoodOfAppearence) {
     this.allItems.add(item);
     this.quantityRanges.put(item, quantityRanges);

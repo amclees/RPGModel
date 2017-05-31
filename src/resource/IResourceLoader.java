@@ -12,7 +12,7 @@ import inventory.LootTable;
 
 public interface IResourceLoader {
   public void fetch();
-  
+
   public Map<String, ICharacter> getCharacters();
 
   public Map<String, Material> getMaterials();

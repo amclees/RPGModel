@@ -25,7 +25,8 @@ public class Human extends Humanoid {
 
     if (faction == null)
       this.faction = "human";
-    else this.faction = faction;
+    else
+      this.faction = faction;
   }
 
   public Human(Template template) {
@@ -39,7 +40,8 @@ public class Human extends Humanoid {
 
     this.HP = constitution * 2;
     this.maxHP = HP;
-    if (this.faction == null) this.faction = "human";
+    if (this.faction == null)
+      this.faction = "human";
   }
 
 }
